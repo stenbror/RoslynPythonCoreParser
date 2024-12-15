@@ -121,8 +121,69 @@ public sealed record LiteralTrueNode(uint Start, uint End, Token Symbol) : ExprN
 
 public sealed record LiteralFalseNode(uint Start, uint End, Token Symbol) : ExprNode(Start, End);
 
+public sealed record LiteralTupleExprNode(uint Start, uint End, Token Symbol1, ExprNode Right, Token Symbol2)
+    : ExprNode(Start, End);
 
+public sealed record LiteralListExprNode(uint Start, uint End, Token Symbol1, ExprNode Right, Token Symbol2)
+    : ExprNode(Start, End);
 
+public sealed record LiteralDictionaryExprNode(uint Start, uint End, Token Symbol1, ExprNode[] Nodes, Token Symbol2)
+    : ExprNode(Start, End);
+
+public sealed record DictionaryEntryExprNode(uint Start, uint End, ExprNode Left, Token Symbol, ExprNode Right)
+    : ExprNode(Start, End);
+
+public sealed record DictionaryReferenceExprNode(uint Start, uint End, Token Symbol, ExprNode Right)
+    : ExprNode(Start, End);
+
+public sealed record LiteralSetExprNode(uint Start, uint End, Token Symbol1, ExprNode[] Nodes, Token Symbol2)
+    : ExprNode(Start, End);
+
+public sealed record LiteralSetReferenceExprNode(uint Start, uint End, Token Symbol1, ExprNode Right)
+    : ExprNode(Start, End);
+
+public sealed record TestListCompExprNode(uint Start, uint End, ExprNode[] Nodes, Token[] Symbols)
+    : ExprNode(Start, End);
+
+public sealed record TrailerDotNameExprNode(uint Start, uint End, Token Symbol, ExprNode Right)
+    : ExprNode(Start, End);
+
+public sealed record TrailerCallExprNode(uint Start, uint End, Token Symbol1, ExprNode Right, Token Symbol2)
+    : ExprNode(Start, End);
+
+public sealed record TrailerIndexExprNode(uint Start, uint End, Token Symbol1, ExprNode Right, Token Symbol2)
+    : ExprNode(Start, End);
+
+public sealed record SubscriptListExprNode(uint Start, uint End, ExprNode[] Nodes, Token[] Symbols)
+    : ExprNode(Start, End);
+
+public sealed record SubscriptExprNode(uint Start, uint End, ExprNode? First, Token? Symbol1, ExprNode? Second, Token? Symbol2, ExprNode? Third)
+    : ExprNode(Start, End);
+
+public sealed record ExprListExprNode(uint Start, uint End, ExprNode[] Nodes, Token[] Symbols)
+    : ExprNode(Start, End);
+
+public sealed record TestListExprNode(uint Start, uint End, ExprNode[] Nodes, Token[] Symbols)
+    : ExprNode(Start, End);
+
+public sealed record ArgListExprNode(uint Start, uint End, ExprNode[] Nodes, Token[] Symbols)
+    : ExprNode(Start, End);
+
+public sealed record ArgumentExprNode(uint Start, uint End, ExprNode? Left, Token? Symbol, ExprNode? Right)
+    : ExprNode(Start, End);
+
+public sealed record SyncCompForExprNode(uint Start, uint End, Token Symbol1, ExprNode Left, Token Symbol2, ExprNode Right, ExprNode? Next)
+    : ExprNode(Start, End);
+
+public sealed record CompForExprNode(uint Start, uint End, Token Symbol, ExprNode Right) : ExprNode(Start, End);
+
+public sealed record CompIfExprNode(uint Start, uint End, Token Symbol, ExprNode Right, ExprNode? Next)
+    : ExprNode(Start, End);
+
+public sealed record YieldExprNode(uint Start, uint End, Token Symbol, ExprNode? Right) : ExprNode(Start, End);
+
+public sealed record YieldFromExprNode(uint Start, uint End, Token Symbol1, Token Symbol2, ExprNode Right)
+    : ExprNode(Start, End);
 
 
 /* Statement nodes */
