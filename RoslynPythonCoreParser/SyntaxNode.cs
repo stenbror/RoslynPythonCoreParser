@@ -56,6 +56,73 @@ public sealed record CompareIsNotExprNode(uint Start, uint End, ExprNode Left, T
 public sealed record StarExprNode(uint Start, uint End, Token Symbol, ExprNode Right)
     : ExprNode(Start, End);
 
+public sealed record OrExprNode(uint Start, uint End, ExprNode Left, Token Symbol, ExprNode Right)
+    : ExprNode(Start, End);
+
+public sealed record XorExprNode(uint Start, uint End, ExprNode Left, Token Symbol, ExprNode Right)
+    : ExprNode(Start, End);
+
+public sealed record AndExprNode(uint Start, uint End, ExprNode Left, Token Symbol, ExprNode Right)
+    : ExprNode(Start, End);
+
+public sealed record ShiftLeftExprNode(uint Start, uint End, ExprNode Left, Token Symbol, ExprNode Right)
+    : ExprNode(Start, End);
+
+public sealed record ShiftRightExprNode(uint Start, uint End, ExprNode Left, Token Symbol, ExprNode Right)
+    : ExprNode(Start, End);
+
+public sealed record BinaryOperatorPlusExprNode(uint Start, uint End, ExprNode Left, Token Symbol, ExprNode Right)
+    : ExprNode(Start, End);
+
+public sealed record BinaryOperatorMinusExprNode(uint Start, uint End, ExprNode Left, Token Symbol, ExprNode Right)
+    : ExprNode(Start, End);
+
+public sealed record BinaryOperatorMulExprNode(uint Start, uint End, ExprNode Left, Token Symbol, ExprNode Right)
+    : ExprNode(Start, End);
+
+public sealed record BinaryOperatorMatriceExprNode(uint Start, uint End, ExprNode Left, Token Symbol, ExprNode Right)
+    : ExprNode(Start, End);
+
+public sealed record BinaryOperatorDivExprNode(uint Start, uint End, ExprNode Left, Token Symbol, ExprNode Right)
+    : ExprNode(Start, End);
+
+public sealed record BinaryOperatorModuloExprNode(uint Start, uint End, ExprNode Left, Token Symbol, ExprNode Right)
+    : ExprNode(Start, End);
+
+public sealed record BinaryOperatorFloorDivExprNode(uint Start, uint End, ExprNode Left, Token Symbol, ExprNode Right)
+    : ExprNode(Start, End);
+
+public sealed record UnaryOperatorPlusExprNode(uint Start, uint End, Token Symbol, ExprNode Right)
+    : ExprNode(Start, End);
+
+public sealed record UnaryOperatorMinusExprNode(uint Start, uint End, Token Symbol, ExprNode Right)
+    : ExprNode(Start, End);
+
+public sealed record UnaryOperatorInvertPlusExprNode(uint Start, uint End, Token Symbol, ExprNode Right)
+    : ExprNode(Start, End);
+
+public sealed record BinaryOperatorPowerExprNode(uint Start, uint End, ExprNode Left, Token Symbol, ExprNode Right)
+    : ExprNode(Start, End);
+
+public sealed record AtomExprNode(uint Start, uint End, Token? Await, ExprNode Right, ExprNode[] Trailer)
+    : ExprNode(Start, End);
+
+public sealed record LiteralNameNode(uint Start, uint End, Token Symbol) : ExprNode(Start, End);
+
+public sealed record LiteralNumberNode(uint Start, uint End, Token Symbol) : ExprNode(Start, End);
+
+public sealed record LiteralStringNode(uint Start, uint End, Token[] Symbols) : ExprNode(Start, End);
+
+public sealed record LiteralEllipsisNode(uint Start, uint End, Token Symbol) : ExprNode(Start, End);
+
+public sealed record LiteralNoneNode(uint Start, uint End, Token Symbol) : ExprNode(Start, End);
+
+public sealed record LiteralTrueNode(uint Start, uint End, Token Symbol) : ExprNode(Start, End);
+
+public sealed record LiteralFalseNode(uint Start, uint End, Token Symbol) : ExprNode(Start, End);
+
+
+
 
 
 /* Statement nodes */
