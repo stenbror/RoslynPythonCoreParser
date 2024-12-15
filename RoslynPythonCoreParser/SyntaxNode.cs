@@ -107,19 +107,19 @@ public sealed record BinaryOperatorPowerExprNode(uint Start, uint End, ExprNode 
 public sealed record AtomExprNode(uint Start, uint End, Token? Await, ExprNode Right, ExprNode[] Trailer)
     : ExprNode(Start, End);
 
-public sealed record LiteralNameNode(uint Start, uint End, Token Symbol) : ExprNode(Start, End);
+public sealed record LiteralNameExprNode(uint Start, uint End, Token Symbol) : ExprNode(Start, End);
 
-public sealed record LiteralNumberNode(uint Start, uint End, Token Symbol) : ExprNode(Start, End);
+public sealed record LiteralNumberExprNode(uint Start, uint End, Token Symbol) : ExprNode(Start, End);
 
-public sealed record LiteralStringNode(uint Start, uint End, Token[] Symbols) : ExprNode(Start, End);
+public sealed record LiteralStringExprNode(uint Start, uint End, Token[] Symbols) : ExprNode(Start, End);
 
-public sealed record LiteralEllipsisNode(uint Start, uint End, Token Symbol) : ExprNode(Start, End);
+public sealed record LiteralEllipsisExprNode(uint Start, uint End, Token Symbol) : ExprNode(Start, End);
 
-public sealed record LiteralNoneNode(uint Start, uint End, Token Symbol) : ExprNode(Start, End);
+public sealed record LiteralNoneExprNode(uint Start, uint End, Token Symbol) : ExprNode(Start, End);
 
-public sealed record LiteralTrueNode(uint Start, uint End, Token Symbol) : ExprNode(Start, End);
+public sealed record LiteralTrueExprNode(uint Start, uint End, Token Symbol) : ExprNode(Start, End);
 
-public sealed record LiteralFalseNode(uint Start, uint End, Token Symbol) : ExprNode(Start, End);
+public sealed record LiteralFalseExprNode(uint Start, uint End, Token Symbol) : ExprNode(Start, End);
 
 public sealed record LiteralTupleExprNode(uint Start, uint End, Token Symbol1, ExprNode Right, Token Symbol2)
     : ExprNode(Start, End);
