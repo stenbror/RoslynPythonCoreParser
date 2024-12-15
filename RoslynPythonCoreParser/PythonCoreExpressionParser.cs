@@ -18,12 +18,38 @@ public partial class PythonCoreParser
         var symbol = Lexer.Symbol;
         Lexer.Advance();
 
-        return new NamedExprNode(pos, Lexer.Position, left, symbol, ParseExpr());
+        var right = ParseExpr();
+
+        return new NamedExprNode(pos, Lexer.Position, left, symbol, right);
     }
 
+    /// <summary>
+    ///  Handling grammar rule: or_test [ 'if' or_test 'else' test ] | LambdaDef
+    /// </summary>
+    /// <returns> TestExprNode | ExprNode </returns>
+    /// <exception cref="Exception"></exception>
     public ExprNode ParseTest()
     {
-        throw new NotImplementedException();
+        if (Lexer.Symbol is LambdaToken) return ParseLambdaDef(true);
+
+        var pos = Lexer.Position;
+        var left = ParseOrTest();
+
+        if (Lexer.Symbol is not IfToken) return left;
+
+        var symbol1 = Lexer.Symbol;
+        Lexer.Advance();
+
+        var right = ParseOrTest();
+
+        if (Lexer.Symbol is not ElseToken) throw new Exception();
+
+        var symbol2 = Lexer.Symbol;
+        Lexer.Advance();
+        
+        var next = ParseTest();
+
+        return new TestExprNode(pos, Lexer.Position, left, symbol1, right, symbol2, next);
     }
     
     public ExprNode ParseLambdaDef(bool isConditional)
@@ -170,5 +196,4 @@ public partial class PythonCoreParser
     {
         throw new NotImplementedException();
     }
-    
 }
