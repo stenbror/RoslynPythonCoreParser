@@ -1,11 +1,24 @@
-﻿namespace RoslynPythonCoreParser;
+﻿using System.Diagnostics.SymbolStore;
+
+namespace RoslynPythonCoreParser;
 
 public partial class PythonCoreParser
 {
-
+    /// <summary>
+    ///  Handling grammar rule: test [ ':=' test ]
+    /// </summary>
+    /// <returns> NamedExprNode | ExprNode </returns>
     public ExprNode ParseNamedExpr()
     {
-        throw new NotImplementedException();
+        var pos = Lexer.Position;
+        var left = ParseExpr();
+
+        if (Lexer.Symbol is not ColonAssignToken) return left;
+        
+        var symbol = Lexer.Symbol;
+        Lexer.Advance();
+
+        return new NamedExprNode(pos, Lexer.Position, left, symbol, ParseExpr());
     }
 
     public ExprNode ParseTest()
