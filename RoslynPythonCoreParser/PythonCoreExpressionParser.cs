@@ -1,6 +1,4 @@
-﻿using System.Diagnostics.SymbolStore;
-using System.Net.Sockets;
-
+﻿
 namespace RoslynPythonCoreParser;
 
 public partial class PythonCoreParser
@@ -273,102 +271,102 @@ public partial class PythonCoreParser
         return left;
     }
     
-    public ExprNode ParseShiftExpr()
+    private ExprNode ParseShiftExpr()
     {
         throw new NotImplementedException();
     }
     
-    public ExprNode ParseArithExpr()
+    private ExprNode ParseArithExpr()
     {
         throw new NotImplementedException();
     }
     
-    public ExprNode ParseTerm()
+    private ExprNode ParseTerm()
     {
         throw new NotImplementedException();
     }
     
-    public ExprNode ParseFactor()
+    private ExprNode ParseFactor()
     {
         throw new NotImplementedException();
     }
     
-    public ExprNode ParsePower()
+    private ExprNode ParsePower()
     {
         throw new NotImplementedException();
     }
     
-    public ExprNode ParseAtomExpr()
+    private ExprNode ParseAtomExpr()
     {
         throw new NotImplementedException();
     }
     
-    public ExprNode ParseAtom()
+    private ExprNode ParseAtom()
     {
         throw new NotImplementedException();
     }
     
-    public ExprNode ParseTestListComp()
+    private ExprNode ParseTestListComp()
     {
         throw new NotImplementedException();
     }
     
-    public ExprNode ParseTrailer()
+    private ExprNode ParseTrailer()
     {
         throw new NotImplementedException();
     }
     
-    public ExprNode ParseSubscriptList()
+    private ExprNode ParseSubscriptList()
     {
         throw new NotImplementedException();
     }
     
-    public ExprNode ParseExprList()
+    private ExprNode ParseExprList()
     {
         throw new NotImplementedException();
     }
     
-    public ExprNode ParseTestList()
+    private ExprNode ParseTestList()
     {
         throw new NotImplementedException();
     }
     
-    public ExprNode ParseDictorSetMaker()
+    private ExprNode ParseDictorSetMaker()
     {
         throw new NotImplementedException();
     }
     
-    public ExprNode ParseArgList()
+    private ExprNode ParseArgList()
     {
         throw new NotImplementedException();
     }
     
-    public ExprNode ParseArgument()
+    private ExprNode ParseArgument()
     {
         throw new NotImplementedException();
     }
     
-    public ExprNode ParseCompIter()
+    private ExprNode ParseCompIter()
     {
         throw new NotImplementedException();
     }
     
-    public ExprNode ParseSyncCompFor()
+    private ExprNode ParseSyncCompFor()
     {
         throw new NotImplementedException();
     }
     
-    public ExprNode ParseCompFor()
+    private ExprNode ParseCompFor()
     {
         throw new NotImplementedException();
     }
     
-    public ExprNode ParseCompIf()
+    private ExprNode ParseCompIf()
     {
         throw new NotImplementedException();
     }
     
-    public ExprNode ParseYieldExpr()
+    private ExprNode ParseYieldExpr()
     {
         throw new NotImplementedException();
     }
