@@ -231,7 +231,7 @@ public partial class PythonCoreParser
     ///  Handling grammar rule: AndExpr ( '^' AndExpr )*
     /// </summary>
     /// <returns></returns>
-    public ExprNode ParseXorExpr()
+    private ExprNode ParseXorExpr()
     {
         var pos = Lexer.Position;
         var left = ParseAndExpr();
