@@ -39,12 +39,54 @@ public sealed record WhileToken(uint Start, uint End, Trivia[] Trivia) : Token(S
 public sealed record WithToken(uint Start, uint End, Trivia[] Trivia) : Token(Start, End, Trivia);
 public sealed record YieldToken(uint Start, uint End, Trivia[] Trivia) : Token(Start, End, Trivia);
 
-
+/* Operator or delimiter tokens */
 public sealed record BinaryOperatorPlusToken(uint Start, uint End, Trivia[] Trivia) : Token(Start, End, Trivia);
-
-
-
+public sealed record BinaryOperatorMinusToken(uint Start, uint End, Trivia[] Trivia) : Token(Start, End, Trivia);
+public sealed record BinaryOperatorMulToken(uint Start, uint End, Trivia[] Trivia) : Token(Start, End, Trivia);
+public sealed record BinaryOperatorPowerToken(uint Start, uint End, Trivia[] Trivia) : Token(Start, End, Trivia);
+public sealed record BinaryOperatorDivToken(uint Start, uint End, Trivia[] Trivia) : Token(Start, End, Trivia);
+public sealed record BinaryOperatorFloorDivToken(uint Start, uint End, Trivia[] Trivia) : Token(Start, End, Trivia);
+public sealed record BinaryOperatorModuloToken(uint Start, uint End, Trivia[] Trivia) : Token(Start, End, Trivia);
+public sealed record BinaryOperatorMatricesToken(uint Start, uint End, Trivia[] Trivia) : Token(Start, End, Trivia);
+public sealed record BinaryOperatorShiftLeftToken(uint Start, uint End, Trivia[] Trivia) : Token(Start, End, Trivia);
+public sealed record BinaryOperatorShiftRightToken(uint Start, uint End, Trivia[] Trivia) : Token(Start, End, Trivia);
+public sealed record BinaryOperatorBitAndToken(uint Start, uint End, Trivia[] Trivia) : Token(Start, End, Trivia);
+public sealed record BinaryOperatorBitOrToken(uint Start, uint End, Trivia[] Trivia) : Token(Start, End, Trivia);
+public sealed record BinaryOperatorBitXorToken(uint Start, uint End, Trivia[] Trivia) : Token(Start, End, Trivia);
+public sealed record UnaryOperatorBitInvertToken(uint Start, uint End, Trivia[] Trivia) : Token(Start, End, Trivia);
 public sealed record ColonAssignToken(uint Start, uint End, Trivia[] Trivia) : Token(Start, End, Trivia);
+public sealed record CompareLessToken(uint Start, uint End, Trivia[] Trivia) : Token(Start, End, Trivia);
+public sealed record CompareGreaterToken(uint Start, uint End, Trivia[] Trivia) : Token(Start, End, Trivia);
+public sealed record CompareLessEqualToken(uint Start, uint End, Trivia[] Trivia) : Token(Start, End, Trivia);
+public sealed record CompareGreaterEqualToken(uint Start, uint End, Trivia[] Trivia) : Token(Start, End, Trivia);
+public sealed record CompareEqualToken(uint Start, uint End, Trivia[] Trivia) : Token(Start, End, Trivia);
+public sealed record CompareNotEqualToken(uint Start, uint End, Trivia[] Trivia) : Token(Start, End, Trivia);
+public sealed record LeftParenToken(uint Start, uint End, Trivia[] Trivia) : Token(Start, End, Trivia);
+public sealed record LeftBracketToken(uint Start, uint End, Trivia[] Trivia) : Token(Start, End, Trivia);
+public sealed record LeftCurlyToken(uint Start, uint End, Trivia[] Trivia) : Token(Start, End, Trivia);
+public sealed record RightParenToken(uint Start, uint End, Trivia[] Trivia) : Token(Start, End, Trivia);
+public sealed record RightBracketToken(uint Start, uint End, Trivia[] Trivia) : Token(Start, End, Trivia);
+public sealed record RightCurlyToken(uint Start, uint End, Trivia[] Trivia) : Token(Start, End, Trivia);
+public sealed record CommaToken(uint Start, uint End, Trivia[] Trivia) : Token(Start, End, Trivia);
+public sealed record ColonToken(uint Start, uint End, Trivia[] Trivia) : Token(Start, End, Trivia);
+public sealed record DotToken(uint Start, uint End, Trivia[] Trivia) : Token(Start, End, Trivia);
+public sealed record SemiColonToken(uint Start, uint End, Trivia[] Trivia) : Token(Start, End, Trivia);
+public sealed record AssignToken(uint Start, uint End, Trivia[] Trivia) : Token(Start, End, Trivia);
+public sealed record ArrowToken(uint Start, uint End, Trivia[] Trivia) : Token(Start, End, Trivia);
+public sealed record PlusAssignToken(uint Start, uint End, Trivia[] Trivia) : Token(Start, End, Trivia);
+public sealed record MinusAssignToken(uint Start, uint End, Trivia[] Trivia) : Token(Start, End, Trivia);
+public sealed record MulAssignToken(uint Start, uint End, Trivia[] Trivia) : Token(Start, End, Trivia);
+public sealed record DivAssignToken(uint Start, uint End, Trivia[] Trivia) : Token(Start, End, Trivia);
+public sealed record FloorDivAssignToken(uint Start, uint End, Trivia[] Trivia) : Token(Start, End, Trivia);
+public sealed record ModuloAssignToken(uint Start, uint End, Trivia[] Trivia) : Token(Start, End, Trivia);
+public sealed record MatricesAssignToken(uint Start, uint End, Trivia[] Trivia) : Token(Start, End, Trivia);
+public sealed record BitAndAssignToken(uint Start, uint End, Trivia[] Trivia) : Token(Start, End, Trivia);
+public sealed record BitOrAssignToken(uint Start, uint End, Trivia[] Trivia) : Token(Start, End, Trivia);
+public sealed record BitXorAssignToken(uint Start, uint End, Trivia[] Trivia) : Token(Start, End, Trivia);
+public sealed record ShiftLeftAssignToken(uint Start, uint End, Trivia[] Trivia) : Token(Start, End, Trivia);
+public sealed record ShiftRightAssignToken(uint Start, uint End, Trivia[] Trivia) : Token(Start, End, Trivia);
+public sealed record PowerAssignToken(uint Start, uint End, Trivia[] Trivia) : Token(Start, End, Trivia);
 
-
+/* Literal tokens */
 public sealed record NumberToken(uint Start, uint End, string Value, Trivia[] Trivia) : Token(Start, End, Trivia);
+public sealed record NameToken(uint Start, uint End, string Value, Trivia[] Trivia) : Token(Start, End, Trivia);

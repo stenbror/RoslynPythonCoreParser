@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics.SymbolStore;
+using System.Net.Sockets;
 
 namespace RoslynPythonCoreParser;
 
@@ -52,29 +53,143 @@ public partial class PythonCoreParser
         return new TestExprNode(pos, Lexer.Position, left, symbol1, right, symbol2, next);
     }
     
-    public ExprNode ParseLambdaDef(bool isConditional)
+    private ExprNode ParseLambdaDef(bool isConditional)
     {
         throw new NotImplementedException();
     }
     
-    public ExprNode ParseOrTest()
+    /// <summary>
+    ///  Grammar rule: AndTest ( 'or' AndTest )*
+    /// </summary>
+    /// <returns> OrTestExprNode | ExprNode </returns>
+    private ExprNode ParseOrTest()
     {
-        throw new NotImplementedException();
+        var pos = Lexer.Position;
+        var left = ParseAndTest();
+
+        while (Lexer.Symbol is OrToken)
+        {
+            var symbol = Lexer.Symbol;
+            Lexer.Advance();
+
+            var right = ParseAndTest();
+
+            left = new OrTestExprNode(pos, Lexer.Position, left, symbol, right);
+        }
+
+        return left;
     }
     
-    public ExprNode ParseAndTest()
+    /// <summary>
+    ///  Grammar rule: NotTest ( 'and' NotTest )*
+    /// </summary>
+    /// <returns> AndTestExprNode | ExprNode </returns>
+    private ExprNode ParseAndTest()
     {
-        throw new NotImplementedException();
+        var pos = Lexer.Position;
+        var left = ParseNotTest();
+
+        while (Lexer.Symbol is OrToken)
+        {
+            var symbol = Lexer.Symbol;
+            Lexer.Advance();
+
+            var right = ParseNotTest();
+
+            left = new AndTestExprNode(pos, Lexer.Position, left, symbol, right);
+        }
+
+        return left;
     }
     
-    public ExprNode ParseNotTest()
+    /// <summary>
+    ///  Grammar rule: Comparison | 'not' NotTest
+    /// </summary>
+    /// <returns> NotTestExprNode | ExprNode </returns>
+    private ExprNode ParseNotTest()
     {
-        throw new NotImplementedException();
+        if (Lexer.Symbol is not NotToken) return ParseComparison();
+        
+        var pos = Lexer.Position;
+        var symbol = Lexer.Symbol;
+        Lexer.Advance();
+
+        var right = ParseNotTest();
+
+        return new NotTestExprNode(pos, Lexer.Position, symbol, right);
     }
     
-    public ExprNode ParseComparison()
+    /// <summary>
+    ///  Grammar rule:  expr ( ('<' | '<=' | '>' | '>=' | '==' | '!=' | '<>' | 'in' | 'is' | 'is 'not' | 'not' 'in') expr )*
+    /// </summary>
+    /// <returns> CompareLessExprNode | CompareLessEqualExprNode | CompareEqualExprNode | CompareNotInExprNode |
+    /// CompareGreaterExprNode | CompareGreaterEqualExprNode | CompareInExprNode | CompareNotInExprNode |
+    /// CompareIsExprNode | CompareIsNotExprNode | ExprNode </returns>
+    /// <exception cref="Exception"></exception>
+    private ExprNode ParseComparison()
     {
-        throw new NotImplementedException();
+        var pos = Lexer.Position;
+        var left = ParseExpr();
+
+        while (Lexer.Symbol is CompareLessToken 
+               or CompareLessEqualToken 
+               or CompareGreaterToken 
+               or CompareLessEqualToken
+               or CompareEqualToken
+               or CompareNotEqualToken
+               or InToken
+               or IsToken
+               or NotToken)
+        {
+            var symbol = Lexer.Symbol;
+            Lexer.Advance();
+            
+            if (symbol is IsToken)
+            {
+                if (Lexer.Symbol is NotToken)
+                {
+                    var symbol2 = Lexer.Symbol;
+                    Lexer.Advance();
+
+                    var right = ParseExpr();
+
+                    left = new CompareIsNotExprNode(pos, Lexer.Position, left, symbol, symbol2, right);
+                }
+                else
+                {
+                    var right = ParseExpr();
+                    left = new CompareIsExprNode(pos, Lexer.Position, left, symbol, right);
+                }
+            }
+            else if (symbol is NotToken)
+            {
+                if (Lexer.Symbol is not InToken) throw new Exception();
+
+                var symbol2 = Lexer.Symbol;
+                Lexer.Advance();
+                var right = ParseExpr();
+
+                left = new CompareNotInExprNode(pos, Lexer.Position, left, symbol, symbol2, right);
+            }
+            else
+            {
+                var right = ParseExpr();
+
+                left = symbol switch
+                {
+                    CompareLessToken => new CompareLessExprNode(pos, Lexer.Position, left, symbol, right),
+                    CompareLessEqualToken => new CompareLessEqualExprNode(pos, Lexer.Position, left, symbol, right),
+                    CompareEqualToken => new CompareEqualExprNode(pos, Lexer.Position, left, symbol, right),
+                    CompareGreaterEqualToken => new CompareGreaterEqualExprNode(pos, Lexer.Position, left, symbol, right),
+                    CompareGreaterToken => new CompareGreaterExprNode(pos, Lexer.Position, left, symbol, right),
+                    CompareNotEqualToken => new CompareNotEqualExprNode(pos, Lexer.Position, left, symbol, right),
+                    InToken => new CompareInExprNode(pos, Lexer.Position, left, symbol, right),
+                    _ => throw new Exception()
+                };
+            }
+        }
+
+        return left;
     }
     
     public ExprNode ParseStarExpr()
