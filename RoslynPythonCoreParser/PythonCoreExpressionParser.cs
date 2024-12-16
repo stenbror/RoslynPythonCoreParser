@@ -297,9 +297,30 @@ public partial class PythonCoreParser
         return left;
     }
     
+    /// <summary>
+    ///  Handling grammar rule: Term ( ( '+' | '-' ) Term )*
+    /// </summary>
+    /// <returns> BinaryOperatorPlusExprNode | BinaryOperatorMinusExprNode | ExprNode </returns>
     private ExprNode ParseArithExpr()
     {
-        throw new NotImplementedException();
+        var pos = Lexer.Position;
+        var left = ParseTerm();
+
+        while (Lexer.Symbol is BinaryOperatorPlusToken or BinaryOperatorMinusToken)
+        {
+            var symbol = Lexer.Symbol;
+            Lexer.Advance();
+
+            var right = ParseTerm();
+
+            left = symbol switch
+            {
+                BinaryOperatorPlusToken => new BinaryOperatorPlusExprNode(pos, Lexer.Position, left, symbol, right),
+                _ => new BinaryOperatorMinusExprNode(pos, Lexer.Position, left, symbol, right)
+            };
+        }
+
+        return left;
     }
     
     private ExprNode ParseTerm()
