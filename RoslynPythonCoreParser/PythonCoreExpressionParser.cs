@@ -192,9 +192,19 @@ public partial class PythonCoreParser
         return left;
     }
     
-    public ExprNode ParseStarExpr()
+    /// <summary>
+    ///  Grammar rule: '*' Expr
+    /// </summary>
+    /// <returns> StarExprNode </returns>
+    private ExprNode ParseStarExpr()
     {
-        throw new NotImplementedException();
+        var pos = Lexer.Position;
+        var symbol = Lexer.Symbol;
+        Lexer.Advance();
+
+        var right = ParseExpr();
+
+        return new StarExprNode(pos, Lexer.Position, symbol, right);
     }
     
     public ExprNode ParseExpr()
