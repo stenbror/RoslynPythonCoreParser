@@ -98,7 +98,7 @@ public sealed record UnaryOperatorPlusExprNode(uint Start, uint End, Token Symbo
 public sealed record UnaryOperatorMinusExprNode(uint Start, uint End, Token Symbol, ExprNode Right)
     : ExprNode(Start, End);
 
-public sealed record UnaryOperatorInvertPlusExprNode(uint Start, uint End, Token Symbol, ExprNode Right)
+public sealed record UnaryOperatorInvertExprNode(uint Start, uint End, Token Symbol, ExprNode Right)
     : ExprNode(Start, End);
 
 public sealed record BinaryOperatorPowerExprNode(uint Start, uint End, ExprNode Left, Token Symbol, ExprNode Right)

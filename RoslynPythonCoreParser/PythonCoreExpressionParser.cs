@@ -358,7 +358,24 @@ public partial class PythonCoreParser
     
     private ExprNode ParseFactor()
     {
-        throw new NotImplementedException();
+        var pos = Lexer.Position;
+
+        if (Lexer.Symbol is BinaryOperatorPlusToken or BinaryOperatorMinusToken or UnaryOperatorBitInvertToken)
+        {
+            var symbol = Lexer.Symbol;
+            Lexer.Advance();
+
+            var right = ParseFactor();
+
+            return symbol switch
+            {
+                BinaryOperatorPlusToken => new UnaryOperatorPlusExprNode(pos, Lexer.Position, symbol, right),
+                BinaryOperatorMinusToken => new UnaryOperatorMinusExprNode(pos, Lexer.Position, symbol, right),
+                _ => new UnaryOperatorInvertExprNode(pos, Lexer.Position, symbol, right),
+            };
+        }
+
+        return ParsePower();
     }
     
     private ExprNode ParsePower()
