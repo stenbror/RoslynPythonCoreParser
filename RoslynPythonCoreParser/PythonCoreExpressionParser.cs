@@ -323,9 +323,37 @@ public partial class PythonCoreParser
         return left;
     }
     
+    /// <summary>
+    ///  Handling grammar rule: Factor ( ( '*' | '@' | '/' | '%' | '//' ) Factor )*
+    /// </summary>
+    /// <returns></returns>
     private ExprNode ParseTerm()
     {
-        throw new NotImplementedException();
+        var pos = Lexer.Position;
+        var left = ParseFactor();
+
+        while (Lexer.Symbol is BinaryOperatorMulToken 
+               or BinaryOperatorMatricesToken
+               or BinaryOperatorDivToken
+               or BinaryOperatorModuloToken
+               or BinaryOperatorFloorDivToken)
+        {
+            var symbol = Lexer.Symbol;
+            Lexer.Advance();
+
+            var right = ParseFactor();
+
+            left = symbol switch
+            {
+                BinaryOperatorMulToken => new BinaryOperatorMulExprNode(pos, Lexer.Position, left, symbol, right),
+                BinaryOperatorMatricesToken => new BinaryOperatorMatriceExprNode(pos, Lexer.Position, left, symbol, right),
+                BinaryOperatorDivToken => new BinaryOperatorDivExprNode(pos, Lexer.Position, left, symbol, right),
+                BinaryOperatorModuloToken => new BinaryOperatorModuloExprNode(pos, Lexer.Position, left, symbol, right),
+                _ => new BinaryOperatorFloorDivExprNode(pos, Lexer.Position, left, symbol, right)
+            };
+        }
+
+        return left;
     }
     
     private ExprNode ParseFactor()
