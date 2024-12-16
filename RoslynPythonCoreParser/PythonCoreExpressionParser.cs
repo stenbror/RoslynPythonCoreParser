@@ -271,9 +271,30 @@ public partial class PythonCoreParser
         return left;
     }
     
+    /// <summary>
+    ///  Handling grammar rule: ArithExpr ( ( '<<' | '>>' ) ArithExpr )*
+    /// </summary>
+    /// <returns> ShiftLeftExprNode | ShiftRightExprNode | ExprNode </returns>
     private ExprNode ParseShiftExpr()
     {
-        throw new NotImplementedException();
+        var pos = Lexer.Position;
+        var left = ParseArithExpr();
+
+        while (Lexer.Symbol is BinaryOperatorShiftLeftToken or BinaryOperatorShiftRightToken)
+        {
+            var symbol = Lexer.Symbol;
+            Lexer.Advance();
+
+            var right = ParseArithExpr();
+
+            left = symbol switch
+            {
+                BinaryOperatorShiftLeftToken => new ShiftLeftExprNode(pos, Lexer.Position, left, symbol, right),
+                _ => new ShiftRightExprNode(pos, Lexer.Position, left, symbol, right)
+            };
+        }
+
+        return left;
     }
     
     private ExprNode ParseArithExpr()
