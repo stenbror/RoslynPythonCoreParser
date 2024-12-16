@@ -208,20 +208,20 @@ public partial class PythonCoreParser
     }
     
     /// <summary>
-    ///  Handler grammar rule: AndExpr ( '|' AndExpr )*
+    ///  Handler grammar rule: XorExpr ( '|' XorExpr )*
     /// </summary>
     /// <returns> OrExprNode | ExprNode </returns>
     private ExprNode ParseExpr()
     {
         var pos = Lexer.Position;
-        var left = ParseAndExpr();
+        var left = ParseXorExpr();
 
         while (Lexer.Symbol is BinaryOperatorBitOrToken)
         {
             var symbol = Lexer.Symbol;
             Lexer.Advance();
 
-            var right = ParseAndExpr();
+            var right = ParseXorExpr();
 
             left = new OrExprNode(pos, Lexer.Position, left, symbol, right);
         }
@@ -229,14 +229,48 @@ public partial class PythonCoreParser
         return left;
     }
     
+    /// <summary>
+    ///  Handling grammar rule: AndExpr ( '^' AndExpr )*
+    /// </summary>
+    /// <returns></returns>
     public ExprNode ParseXorExpr()
     {
-        throw new NotImplementedException();
+        var pos = Lexer.Position;
+        var left = ParseAndExpr();
+
+        while (Lexer.Symbol is BinaryOperatorBitXorToken)
+        {
+            var symbol = Lexer.Symbol;
+            Lexer.Advance();
+
+            var right = ParseAndExpr();
+
+            left = new XorExprNode(pos, Lexer.Position, left, symbol, right);
+        }
+        
+        return left;
     }
     
-    public ExprNode ParseAndExpr()
+    /// <summary>
+    ///  Handling grammar rule: ShiftExpr ( '&' ShiftExpr )*
+    /// </summary>
+    /// <returns></returns>
+    private ExprNode ParseAndExpr()
     {
-        throw new NotImplementedException();
+        var pos = Lexer.Position;
+        var left = ParseShiftExpr();
+
+        while (Lexer.Symbol is BinaryOperatorBitAndToken)
+        {
+            var symbol = Lexer.Symbol;
+            Lexer.Advance();
+
+            var right = ParseShiftExpr();
+
+            left = new AndExprNode(pos, Lexer.Position, left, symbol, right);
+        }
+        
+        return left;
     }
     
     public ExprNode ParseShiftExpr()
