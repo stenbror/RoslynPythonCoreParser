@@ -356,6 +356,10 @@ public partial class PythonCoreParser
         return left;
     }
     
+    /// <summary>
+    ///  Handling grammar rule: ( '+' | '-' | '~' ) factor | Power
+    /// </summary>
+    /// <returns> UnaryOperatorPlusExprNode | UnaryOperatorMinusExprNode | UnaryOperatorInvertExprNode | ExprNode </returns>
     private ExprNode ParseFactor()
     {
         var pos = Lexer.Position;
