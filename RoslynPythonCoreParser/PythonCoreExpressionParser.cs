@@ -59,7 +59,7 @@ public partial class PythonCoreParser
     }
     
     /// <summary>
-    ///  Grammar rule: AndTest ( 'or' AndTest )*
+    ///  Handling grammar rule: AndTest ( 'or' AndTest )*
     /// </summary>
     /// <returns> OrTestExprNode | ExprNode </returns>
     private ExprNode ParseOrTest()
@@ -81,7 +81,7 @@ public partial class PythonCoreParser
     }
     
     /// <summary>
-    ///  Grammar rule: NotTest ( 'and' NotTest )*
+    ///  Handling grammar rule: NotTest ( 'and' NotTest )*
     /// </summary>
     /// <returns> AndTestExprNode | ExprNode </returns>
     private ExprNode ParseAndTest()
@@ -103,7 +103,7 @@ public partial class PythonCoreParser
     }
     
     /// <summary>
-    ///  Grammar rule: Comparison | 'not' NotTest
+    ///  Handling grammar rule: Comparison | 'not' NotTest
     /// </summary>
     /// <returns> NotTestExprNode | ExprNode </returns>
     private ExprNode ParseNotTest()
@@ -120,7 +120,7 @@ public partial class PythonCoreParser
     }
     
     /// <summary>
-    ///  Grammar rule:  expr ( ('<' | '<=' | '>' | '>=' | '==' | '!=' | '<>' | 'in' | 'is' | 'is 'not' | 'not' 'in') expr )*
+    ///  Handling grammar rule:  expr ( ('<' | '<=' | '>' | '>=' | '==' | '!=' | '<>' | 'in' | 'is' | 'is 'not' | 'not' 'in') expr )*
     /// </summary>
     /// <returns> CompareLessExprNode | CompareLessEqualExprNode | CompareEqualExprNode | CompareNotInExprNode |
     /// CompareGreaterExprNode | CompareGreaterEqualExprNode | CompareInExprNode | CompareNotInExprNode |
@@ -193,7 +193,7 @@ public partial class PythonCoreParser
     }
     
     /// <summary>
-    ///  Grammar rule: '*' Expr
+    ///  Handling grammar rule: '*' Expr
     /// </summary>
     /// <returns> StarExprNode </returns>
     private ExprNode ParseStarExpr()
@@ -207,9 +207,26 @@ public partial class PythonCoreParser
         return new StarExprNode(pos, Lexer.Position, symbol, right);
     }
     
-    public ExprNode ParseExpr()
+    /// <summary>
+    ///  Handler grammar rule: AndExpr ( '|' AndExpr )*
+    /// </summary>
+    /// <returns> OrExprNode | ExprNode </returns>
+    private ExprNode ParseExpr()
     {
-        throw new NotImplementedException();
+        var pos = Lexer.Position;
+        var left = ParseAndExpr();
+
+        while (Lexer.Symbol is BinaryOperatorBitOrToken)
+        {
+            var symbol = Lexer.Symbol;
+            Lexer.Advance();
+
+            var right = ParseAndExpr();
+
+            left = new OrExprNode(pos, Lexer.Position, left, symbol, right);
+        }
+        
+        return left;
     }
     
     public ExprNode ParseXorExpr()
