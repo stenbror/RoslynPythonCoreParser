@@ -60,6 +60,12 @@ public partial class PythonCoreParser
         return Lexer.Symbol is LambdaToken ? ParseLambdaDef(false) : ParseOrTest();
     }
     
+    /// <summary>
+    ///  Handle grammar rule: ( 'lambda' [varargslist] ':' test ) | ( 'lambda' [varargslist] ':' test_nocond )
+    /// </summary>
+    /// <param name="isConditional"></param>
+    /// <returns> LambdaExprNode </returns>
+    /// <exception cref="Exception"></exception>
     private ExprNode ParseLambdaDef(bool isConditional)
     {
         var pos = Lexer.Position;
@@ -74,7 +80,7 @@ public partial class PythonCoreParser
 
         var right = isConditional ? ParseTest() : ParseTestNoCond();
 
-        return new LambdaExpr(pos, Lexer.Position, symbol1, left, symbol2, right, isConditional);
+        return new LambdaExprNode(pos, Lexer.Position, symbol1, left, symbol2, right, isConditional);
     }
     
     /// <summary>
