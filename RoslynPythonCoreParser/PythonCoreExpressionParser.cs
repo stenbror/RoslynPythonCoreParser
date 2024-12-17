@@ -403,9 +403,44 @@ public partial class PythonCoreParser
         return left;
     }
     
+    /// <summary>
+    ///  Handle grammar rule: [ AWAIT ] Atom Trailer*
+    /// </summary>
+    /// <returns> AtomExprNode | ExprNode </returns>
     private ExprNode ParseAtomExpr()
     {
-        throw new NotImplementedException();
+        var pos = Lexer.Position;
+        Token? await = null;
+
+        if (Lexer.Symbol is AwaitToken)
+        {
+            await = Lexer.Symbol;
+            Lexer.Advance();
+        }
+
+        var right = ParseAtom();
+
+        if (await != null || Lexer.Symbol is LeftParenToken || Lexer.Symbol is LeftBracketToken ||
+            Lexer.Symbol is DotToken)
+        {
+            if (Lexer.Symbol is LeftParenToken || Lexer.Symbol is LeftBracketToken ||
+                Lexer.Symbol is DotToken)
+            {
+                List<ExprNode> Trailers = new List<ExprNode>();
+
+                while (Lexer.Symbol is LeftParenToken || Lexer.Symbol is LeftBracketToken ||
+                       Lexer.Symbol is DotToken)
+                {
+                    Trailers.Add(ParseTrailer());
+                }
+                
+                return new AtomExprNode(pos, Lexer.Position, await, right, Trailers.ToArray());
+            }
+
+            return new AtomExprNode(pos, Lexer.Position, await, right, []);
+        }
+
+        return right;
     }
     
     private ExprNode ParseAtom()
