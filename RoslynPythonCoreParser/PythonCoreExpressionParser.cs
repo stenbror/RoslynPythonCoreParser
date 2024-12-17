@@ -522,9 +522,46 @@ public partial class PythonCoreParser
         };
     }
     
+    /// <summary>
+    ///  Handle grammar rule: (namedexpr_test|star_expr) ( comp_for | (',' (namedexpr_test|star_expr))* [','] )
+    /// </summary>
+    /// <returns></returns>
     private ExprNode ParseTestListComp()
     {
-        throw new NotImplementedException();
+        var pos = Lexer.Position;
+        var nodes = new List<ExprNode>();
+        var separators = new List<Token>();
+        
+        nodes.Add( Lexer.Symbol switch
+        {
+            BinaryOperatorMulToken => ParseStarExpr(),
+            _ => ParseNamedExpr()
+        });
+
+        if (Lexer.Symbol is ForToken or AsyncToken)
+        {
+            nodes.Add(ParseCompFor());
+        }
+        else
+        {
+            while (Lexer.Symbol is CommaToken)
+            {
+                separators.Add(Lexer.Symbol);
+                Lexer.Advance();
+
+                if (Lexer.Symbol is RightParenToken or RightBracketToken) break;
+                
+                nodes.Add( Lexer.Symbol switch
+                {
+                    BinaryOperatorMulToken => ParseStarExpr(),
+                    _ => ParseNamedExpr()
+                });
+            }
+        }
+
+        return nodes.Count == 1
+            ? nodes[0]
+            : new TestListCompExprNode(pos, Lexer.Position, nodes.ToArray(), separators.ToArray());
     }
     
     private ExprNode ParseTrailer()
