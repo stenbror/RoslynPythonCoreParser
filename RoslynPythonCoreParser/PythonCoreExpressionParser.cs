@@ -668,9 +668,31 @@ public partial class PythonCoreParser
         throw new NotImplementedException();
     }
     
+    /// <summary>
+    ///  Handle grammar rule: argument (',' argument)*  [',']
+    /// </summary>
+    /// <returns> ArgListExprNode | ExprNode </returns>
     private ExprNode ParseArgList()
     {
-        throw new NotImplementedException();
+        var pos = Lexer.Position;
+        var nodes = new List<ExprNode>();
+        var separators = new List<Token>();
+        
+        nodes.Add( ParseArgument() );
+        
+        while (Lexer.Symbol is CommaToken)
+        {
+            separators.Add(Lexer.Symbol);
+            Lexer.Advance();
+
+            if (Lexer.Symbol is RightParenToken) break;
+            
+            nodes.Add( ParseArgument() );
+        }
+        
+        return nodes.Count == 1
+            ? nodes[0]
+            : new ArgListExprNode(pos, Lexer.Position, nodes.ToArray(), separators.ToArray());
     }
     
     private ExprNode ParseArgument()
