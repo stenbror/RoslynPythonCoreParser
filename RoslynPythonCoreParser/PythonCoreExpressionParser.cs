@@ -659,9 +659,35 @@ public partial class PythonCoreParser
             : new SubscriptListExprNode(pos, Lexer.Position, nodes.ToArray(), separators.ToArray());
     }
 
+    /// <summary>
+    ///  Handling grammar rule: test | [test] ':' [test] [ ':' [Test]]
+    /// </summary>
+    /// <returns> SubscriptExprNode </returns>
     private ExprNode ParseSubscript()
     {
-        throw new NotImplementedException();
+        var pos = Lexer.Position;
+        var first = Lexer.Symbol is not ColonToken ? ParseTest() : null;
+        
+        Token? symbol1 = null, symbol2 = null;
+        ExprNode? second = null, third = null;
+
+        if (Lexer.Symbol is ColonToken)
+        {
+            symbol1 = Lexer.Symbol;
+            Lexer.Advance();
+
+            second = Lexer.Symbol is not ColonToken && Lexer.Symbol is not RightBracketToken && Lexer.Symbol is not CommaToken ? ParseTest() : null;
+
+            if (Lexer.Symbol is ColonToken)
+            {
+                symbol2 = Lexer.Symbol;
+                Lexer.Advance();
+
+                third = Lexer.Symbol is not RightBracketToken && Lexer.Symbol is not CommaToken ? ParseTest() : null;
+            }
+        }
+
+        return new SubscriptExprNode(pos, Lexer.Position, first, symbol1, second, symbol2, third);
     }
     
     /// <summary>
