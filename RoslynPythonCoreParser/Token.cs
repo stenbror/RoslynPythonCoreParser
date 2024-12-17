@@ -92,3 +92,7 @@ public sealed record ElipsisToken(uint Start, uint End, Trivia[] Trivia) : Token
 public sealed record NumberToken(uint Start, uint End, string Value, Trivia[] Trivia) : Token(Start, End, Trivia);
 public sealed record NameToken(uint Start, uint End, string Value, Trivia[] Trivia) : Token(Start, End, Trivia);
 public sealed record StringToken(uint Start, uint End, string Value, Trivia[] Trivia) : Token(Start, End, Trivia);
+
+
+/* Special tokens */
+public sealed record NewlineToken(uint Start, uint End, Trivia[] Trivia, char Ch1, char ch2) : Token(Start, End, Trivia);

@@ -636,9 +636,31 @@ public partial class PythonCoreParser
             : new ExprListExprNode(pos, Lexer.Position, nodes.ToArray(), separators.ToArray());
     }
     
+    /// <summary>
+    ///  Handle grammar rule: test (',' test)* [',']
+    /// </summary>
+    /// <returns> TestListExprNode | ExprNode </returns>
     private ExprNode ParseTestList()
     {
-        throw new NotImplementedException();
+        var pos = Lexer.Position;
+        var nodes = new List<ExprNode>();
+        var separators = new List<Token>();
+        
+        nodes.Add( ParseTest() );
+        
+        while (Lexer.Symbol is CommaToken)
+        {
+            separators.Add(Lexer.Symbol);
+            Lexer.Advance();
+
+            if (Lexer.Symbol is SemiColonToken or NewlineToken) break;
+            
+            nodes.Add( ParseTest() );
+        }
+        
+        return nodes.Count == 1
+            ? nodes[0]
+            : new TestListExprNode(pos, Lexer.Position, nodes.ToArray(), separators.ToArray());
     }
     
     private ExprNode ParseDictorSetMaker(LeftCurlyToken symbol1)
