@@ -525,7 +525,7 @@ public partial class PythonCoreParser
     /// <summary>
     ///  Handle grammar rule: (namedexpr_test|star_expr) ( comp_for | (',' (namedexpr_test|star_expr))* [','] )
     /// </summary>
-    /// <returns></returns>
+    /// <returns> TestListCompExprNode | ExprNode </returns>
     private ExprNode ParseTestListComp()
     {
         var pos = Lexer.Position;
