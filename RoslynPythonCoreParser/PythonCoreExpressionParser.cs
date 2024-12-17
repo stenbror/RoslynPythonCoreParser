@@ -593,7 +593,43 @@ public partial class PythonCoreParser
     
     private ExprNode ParseTrailer()
     {
-        throw new NotImplementedException();
+        var pos = Lexer.Position;
+        var symbol = Lexer.Symbol;
+        Lexer.Advance();
+
+        if (symbol is LeftParenToken)
+        {
+            var right = Lexer.Symbol is RightParenToken ? null : ParseArgList();
+
+            if (Lexer.Symbol is not RightParenToken) throw new Exception();
+            var symbol2 = Lexer.Symbol;
+            Lexer.Advance();
+
+            return new TrailerCallExprNode(pos, Lexer.Position, symbol, right, symbol2);
+        }
+        else if (symbol is LeftBracketToken)
+        {
+            var right = ParseSubscriptList();
+
+            if (Lexer.Symbol is not RightBracketToken) throw new Exception();
+            var symbol2 = Lexer.Symbol;
+            Lexer.Advance();
+
+            return new TrailerIndexExprNode(pos, Lexer.Position, symbol, right, symbol2);
+        }
+        else if (symbol is DotToken)
+        {
+            if (Lexer.Symbol is not NameToken) throw new Exception();
+
+            var symbol2 = Lexer.Symbol;
+            Lexer.Advance();
+            
+            var right = new LiteralNameExprNode(pos, Lexer.Position, symbol2);
+
+            return new TrailerDotNameExprNode(pos, Lexer.Position, symbol, right);
+        }
+
+        throw new Exception();
     }
     
     /// <summary>

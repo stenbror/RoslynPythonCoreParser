@@ -148,7 +148,7 @@ public sealed record TestListCompExprNode(uint Start, uint End, ExprNode[] Nodes
 public sealed record TrailerDotNameExprNode(uint Start, uint End, Token Symbol, ExprNode Right)
     : ExprNode(Start, End);
 
-public sealed record TrailerCallExprNode(uint Start, uint End, Token Symbol1, ExprNode Right, Token Symbol2)
+public sealed record TrailerCallExprNode(uint Start, uint End, Token Symbol1, ExprNode? Right, Token Symbol2)
     : ExprNode(Start, End);
 
 public sealed record TrailerIndexExprNode(uint Start, uint End, Token Symbol1, ExprNode Right, Token Symbol2)
