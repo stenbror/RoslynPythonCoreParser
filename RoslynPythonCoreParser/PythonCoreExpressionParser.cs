@@ -471,7 +471,33 @@ public partial class PythonCoreParser
             
             return new LiteralStringExprNode(pos, Lexer.Position, nodes.ToArray());
         }
+        
+        if (Lexer.Symbol is LeftParenToken)
+        {
+            ExprNode? right = Lexer.Symbol switch
+            {
+                YieldToken => ParseYieldExpr(),
+                RightParenToken => null,
+                _ => ParseTestListComp()
+            };
+            
+            if (Lexer.Symbol is not RightParenToken) throw new Exception();
 
+            var symbol2 = Lexer.Symbol;
+            Lexer.Advance();
+
+            return new LiteralTupleExprNode(pos, Lexer.Position, symbol, right, symbol2);
+        }
+
+        if (Lexer.Symbol is LeftBracketToken)
+        {
+            
+        }
+
+        if (Lexer.Symbol is LeftCurlyToken)
+        {
+            
+        }
 
         return symbol switch
         {

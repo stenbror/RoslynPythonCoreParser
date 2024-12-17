@@ -121,10 +121,10 @@ public sealed record LiteralTrueExprNode(uint Start, uint End, Token Symbol) : E
 
 public sealed record LiteralFalseExprNode(uint Start, uint End, Token Symbol) : ExprNode(Start, End);
 
-public sealed record LiteralTupleExprNode(uint Start, uint End, Token Symbol1, ExprNode Right, Token Symbol2)
+public sealed record LiteralTupleExprNode(uint Start, uint End, Token Symbol1, ExprNode? Right, Token Symbol2)
     : ExprNode(Start, End);
 
-public sealed record LiteralListExprNode(uint Start, uint End, Token Symbol1, ExprNode Right, Token Symbol2)
+public sealed record LiteralListExprNode(uint Start, uint End, Token Symbol1, ExprNode? Right, Token Symbol2)
     : ExprNode(Start, End);
 
 public sealed record LiteralDictionaryExprNode(uint Start, uint End, Token Symbol1, ExprNode[] Nodes, Token Symbol2)
