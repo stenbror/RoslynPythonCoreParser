@@ -785,9 +785,28 @@ public partial class PythonCoreParser
         };
     }
     
+    /// <summary>
+    ///  Handle grammar rule: for' exprlist 'in' or_test [comp_iter]
+    /// </summary>
+    /// <returns> SyncCompForExprNode </returns>
+    /// <exception cref="Exception"></exception>
     private ExprNode ParseSyncCompFor()
     {
-        throw new NotImplementedException();
+        var pos = Lexer.Position;
+        var symbol1 = Lexer.Symbol;
+        Lexer.Advance();
+
+        var left = ParseExprList();
+
+        if (Lexer.Symbol is not InToken) throw new Exception();
+        var symbol2 = Lexer.Symbol;
+        Lexer.Advance();
+
+        var right = ParseOrTest();
+        
+        var next = Lexer.Symbol is ForToken or IfToken or AsyncToken ? ParseCompIter() : null;
+
+        return new SyncCompForExprNode(pos, Lexer.Position, symbol1, left, symbol2, right, next);
     }
     
     /// <summary>
