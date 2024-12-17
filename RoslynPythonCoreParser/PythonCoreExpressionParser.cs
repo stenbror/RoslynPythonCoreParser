@@ -601,9 +601,39 @@ public partial class PythonCoreParser
         throw new NotImplementedException();
     }
     
+    /// <summary>
+    ///  Handle grammar rule: (expr|star_expr) (',' (expr|star_expr))* [',']
+    /// </summary>
+    /// <returns> ExprListExprNode | ExprNode </returns>
     private ExprNode ParseExprList()
     {
-        throw new NotImplementedException();
+        var pos = Lexer.Position;
+        var nodes = new List<ExprNode>();
+        var separators = new List<Token>();
+        
+        nodes.Add( Lexer.Symbol switch
+        {
+            BinaryOperatorMulToken => ParseStarExpr(),
+            _ => ParseExpr()
+        });
+        
+        while (Lexer.Symbol is CommaToken)
+        {
+            separators.Add(Lexer.Symbol);
+            Lexer.Advance();
+
+            if (Lexer.Symbol is InToken) break;
+            
+            nodes.Add( Lexer.Symbol switch
+            {
+                BinaryOperatorMulToken => ParseStarExpr(),
+                _ => ParseExpr()
+            });
+        }
+        
+        return nodes.Count == 1
+            ? nodes[0]
+            : new ExprListExprNode(pos, Lexer.Position, nodes.ToArray(), separators.ToArray());
     }
     
     private ExprNode ParseTestList()
