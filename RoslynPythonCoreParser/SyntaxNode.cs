@@ -11,7 +11,7 @@ public sealed record NamedExprNode(uint Start, uint End, ExprNode Left, Token Sy
 public sealed record TestExprNode(uint Start, uint End, ExprNode Left, Token Symbol1, ExprNode Right, Token Symbol2, ExprNode Next) 
     : ExprNode(Start, End);
 
-public sealed record LambdaExpr(uint Start, uint End, Token Symbol1, ExprNode Left, Token Symbol2, ExprNode Right, bool IsConditional) 
+public sealed record LambdaExpr(uint Start, uint End, Token Symbol1, StmtNode? Left, Token Symbol2, ExprNode Right, bool IsConditional) 
     : ExprNode(Start, End);
 
 public sealed record OrTestExprNode(uint Start, uint End, ExprNode Left, Token Symbol, ExprNode Right)

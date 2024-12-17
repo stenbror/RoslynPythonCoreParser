@@ -7,7 +7,7 @@ public partial class PythonCoreParser
     ///  Handling grammar rule: test [ ':=' test ]
     /// </summary>
     /// <returns> NamedExprNode | ExprNode </returns>
-    public ExprNode ParseNamedExpr()
+    private ExprNode ParseNamedExpr()
     {
         var pos = Lexer.Position;
         var left = ParseExpr();
@@ -27,7 +27,7 @@ public partial class PythonCoreParser
     /// </summary>
     /// <returns> TestExprNode | ExprNode </returns>
     /// <exception cref="Exception"></exception>
-    public ExprNode ParseTest()
+    private ExprNode ParseTest()
     {
         if (Lexer.Symbol is LambdaToken) return ParseLambdaDef(true);
 
@@ -62,7 +62,19 @@ public partial class PythonCoreParser
     
     private ExprNode ParseLambdaDef(bool isConditional)
     {
-        throw new NotImplementedException();
+        var pos = Lexer.Position;
+        var symbol1 = Lexer.Symbol;
+        Lexer.Advance();
+
+        var left = Lexer.Symbol is not ColonToken ? ParseVarArgsList() : null;
+
+        if (Lexer.Symbol is not ColonToken) throw new Exception();
+        var symbol2 = Lexer.Symbol;
+        Lexer.Advance();
+
+        var right = isConditional ? ParseTest() : ParseTestNoCond();
+
+        return new LambdaExpr(pos, Lexer.Position, symbol1, left, symbol2, right, isConditional);
     }
     
     /// <summary>
@@ -435,15 +447,15 @@ public partial class PythonCoreParser
             if (Lexer.Symbol is LeftParenToken || Lexer.Symbol is LeftBracketToken ||
                 Lexer.Symbol is DotToken)
             {
-                List<ExprNode> Trailers = new List<ExprNode>();
+                List<ExprNode> trailers = new List<ExprNode>();
 
                 while (Lexer.Symbol is LeftParenToken || Lexer.Symbol is LeftBracketToken ||
                        Lexer.Symbol is DotToken)
                 {
-                    Trailers.Add(ParseTrailer());
+                    trailers.Add(ParseTrailer());
                 }
                 
-                return new AtomExprNode(pos, Lexer.Position, await, right, Trailers.ToArray());
+                return new AtomExprNode(pos, Lexer.Position, await, right, trailers.ToArray());
             }
 
             return new AtomExprNode(pos, Lexer.Position, await, right, []);
