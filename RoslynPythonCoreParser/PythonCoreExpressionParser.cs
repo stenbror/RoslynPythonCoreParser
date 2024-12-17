@@ -790,9 +790,19 @@ public partial class PythonCoreParser
         throw new NotImplementedException();
     }
     
+    /// <summary>
+    ///  Handle grammar rule: 'async' SyncCompFor
+    /// </summary>
+    /// <returns> CompForExprNode </returns>
     private ExprNode ParseCompFor()
     {
-        throw new NotImplementedException();
+        var pos = Lexer.Position;
+        var symbol = Lexer.Symbol;
+        Lexer.Advance();
+
+        var right = ParseSyncCompFor();
+
+        return new CompForExprNode(pos, Lexer.Position, symbol, right);
     }
     
     /// <summary>
