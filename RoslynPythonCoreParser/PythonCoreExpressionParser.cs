@@ -459,7 +459,7 @@ public partial class PythonCoreParser
         var symbol = Lexer.Symbol;
         Lexer.Advance();
 
-        if (Lexer.Symbol is StringToken)
+        if (symbol is StringToken)
         {
             var nodes = new List<StringToken>();
 
@@ -472,7 +472,7 @@ public partial class PythonCoreParser
             return new LiteralStringExprNode(pos, Lexer.Position, nodes.ToArray());
         }
         
-        if (Lexer.Symbol is LeftParenToken)
+        if (symbol is LeftParenToken)
         {
             ExprNode? right = Lexer.Symbol switch
             {
@@ -489,14 +489,25 @@ public partial class PythonCoreParser
             return new LiteralTupleExprNode(pos, Lexer.Position, symbol, right, symbol2);
         }
 
-        if (Lexer.Symbol is LeftBracketToken)
+        if (symbol is LeftBracketToken)
         {
+            ExprNode? right = Lexer.Symbol switch
+            {
+                RightParenToken => null,
+                _ => ParseTestListComp()
+            };
             
+            if (Lexer.Symbol is not RightBracketToken) throw new Exception();
+
+            var symbol2 = Lexer.Symbol;
+            Lexer.Advance();
+
+            return new LiteralListExprNode(pos, Lexer.Position, symbol, right, symbol2);
         }
 
-        if (Lexer.Symbol is LeftCurlyToken)
+        if (symbol is LeftCurlyToken symbol1)
         {
-            
+            return ParseDictorSetMaker(symbol1);
         }
 
         return symbol switch
@@ -536,7 +547,7 @@ public partial class PythonCoreParser
         throw new NotImplementedException();
     }
     
-    private ExprNode ParseDictorSetMaker()
+    private ExprNode ParseDictorSetMaker(LeftCurlyToken symbol1)
     {
         throw new NotImplementedException();
     }
