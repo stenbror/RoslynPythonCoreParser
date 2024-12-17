@@ -696,9 +696,9 @@ public partial class PythonCoreParser
     }
     
     /// <summary>
-    ///  Handle grammar rule: ( test [comp_for] |
-    /// test ':=' test |
-    /// test '=' test |
+    ///  Handle grammar rule: ( NAME [comp_for] |
+    /// NAME ':=' test |
+    /// NAME '=' test |
     /// '**' test |
     /// '*' test )
     /// </summary>
@@ -760,9 +760,20 @@ public partial class PythonCoreParser
         else throw new Exception();
     }
     
+    /// <summary>
+    ///  Handle grammar rule: comp_for | comp_if
+    /// </summary>
+    /// <returns> ExprNode </returns>
+    /// <exception cref="Exception"></exception>
     private ExprNode ParseCompIter()
     {
-        throw new NotImplementedException();
+        return Lexer.Symbol switch
+        {
+            IfToken => ParseCompIf(),
+            AsyncToken => ParseCompFor(),
+            ForToken => ParseSyncCompFor(),
+            _ => throw new Exception()
+        };
     }
     
     private ExprNode ParseSyncCompFor()
