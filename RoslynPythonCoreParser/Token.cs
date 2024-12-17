@@ -86,7 +86,9 @@ public sealed record BitXorAssignToken(uint Start, uint End, Trivia[] Trivia) : 
 public sealed record ShiftLeftAssignToken(uint Start, uint End, Trivia[] Trivia) : Token(Start, End, Trivia);
 public sealed record ShiftRightAssignToken(uint Start, uint End, Trivia[] Trivia) : Token(Start, End, Trivia);
 public sealed record PowerAssignToken(uint Start, uint End, Trivia[] Trivia) : Token(Start, End, Trivia);
+public sealed record ElipsisToken(uint Start, uint End, Trivia[] Trivia) : Token(Start, End, Trivia);
 
 /* Literal tokens */
 public sealed record NumberToken(uint Start, uint End, string Value, Trivia[] Trivia) : Token(Start, End, Trivia);
 public sealed record NameToken(uint Start, uint End, string Value, Trivia[] Trivia) : Token(Start, End, Trivia);
+public sealed record StringToken(uint Start, uint End, string Value, Trivia[] Trivia) : Token(Start, End, Trivia);

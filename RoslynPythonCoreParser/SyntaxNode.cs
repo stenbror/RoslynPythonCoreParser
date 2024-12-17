@@ -111,7 +111,7 @@ public sealed record LiteralNameExprNode(uint Start, uint End, Token Symbol) : E
 
 public sealed record LiteralNumberExprNode(uint Start, uint End, Token Symbol) : ExprNode(Start, End);
 
-public sealed record LiteralStringExprNode(uint Start, uint End, Token[] Symbols) : ExprNode(Start, End);
+public sealed record LiteralStringExprNode(uint Start, uint End, StringToken[] Symbols) : ExprNode(Start, End);
 
 public sealed record LiteralEllipsisExprNode(uint Start, uint End, Token Symbol) : ExprNode(Start, End);
 

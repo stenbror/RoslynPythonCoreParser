@@ -443,9 +443,46 @@ public partial class PythonCoreParser
         return right;
     }
     
+    /// <summary>
+    ///  Handling grammar rule: ('(' [yield_expr|testlist_comp] ')' |
+    /// '[' [testlist_comp] ']' |
+    /// '{' [dictorsetmaker] '}' |
+    /// NAME | NUMBER | STRING+ | '...' | 'None' | 'True' | 'False')
+    /// </summary>
+    /// <returns> LiteralNameExprNode | LiteralNumberExprNode | LiteralStringExprNode | LiteralElipsisExprNode |
+    /// LiteralNoneExprNode | LiteralTrueExprNode | LiteralFalseExprNode | LiteralTupleExprNode |
+    /// LiteralListExprNode | LiteralDictionaryExprNode | LiteralSetExprNode </returns>
+    /// <exception cref="Exception"></exception>
     private ExprNode ParseAtom()
     {
-        throw new NotImplementedException();
+        var pos = Lexer.Position;
+        var symbol = Lexer.Symbol;
+        Lexer.Advance();
+
+        if (Lexer.Symbol is StringToken)
+        {
+            var nodes = new List<StringToken>();
+
+            while (Lexer.Symbol is StringToken token)
+            {
+                nodes.Add(token);
+                Lexer.Advance();
+            }
+            
+            return new LiteralStringExprNode(pos, Lexer.Position, nodes.ToArray());
+        }
+
+
+        return symbol switch
+        {
+            NameToken => new LiteralNameExprNode(pos, Lexer.Position, symbol),
+            NumberToken => new LiteralNumberExprNode(pos, Lexer.Position, symbol),
+            NoneToken => new LiteralNoneExprNode(pos, Lexer.Position, symbol),
+            TrueToken => new LiteralTrueExprNode(pos, Lexer.Position, symbol),
+            FalseToken => new LiteralFalseExprNode(pos, Lexer.Position, symbol),
+            ElipsisToken => new LiteralEllipsisExprNode(pos, Lexer.Position, symbol),
+            _ => throw new Exception()
+        };
     }
     
     private ExprNode ParseTestListComp()
