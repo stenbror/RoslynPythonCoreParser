@@ -180,7 +180,7 @@ public sealed record CompForExprNode(uint Start, uint End, Token Symbol, ExprNod
 public sealed record CompIfExprNode(uint Start, uint End, Token Symbol, ExprNode Right, ExprNode? Next)
     : ExprNode(Start, End);
 
-public sealed record YieldExprNode(uint Start, uint End, Token Symbol, ExprNode? Right) : ExprNode(Start, End);
+public sealed record YieldExprNode(uint Start, uint End, Token Symbol, StmtNode Right) : ExprNode(Start, End);
 
 public sealed record YieldFromExprNode(uint Start, uint End, Token Symbol1, Token Symbol2, ExprNode Right)
     : ExprNode(Start, End);

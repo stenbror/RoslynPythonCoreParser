@@ -812,8 +812,28 @@ public partial class PythonCoreParser
         return new CompIfExprNode(pos, Lexer.Position, symbol, right, next);
     }
     
+    /// <summary>
+    ///  Handle grammar rule: 'yield' ( ( 'from' Test ) | TestListStarExpr ) 
+    /// </summary>
+    /// <returns> YieldFromExprNode | YieldExprNode </returns>
     private ExprNode ParseYieldExpr()
     {
-        throw new NotImplementedException();
+        var pos = Lexer.Position;
+        var symbol1 = Lexer.Symbol;
+        Lexer.Advance();
+
+        if (Lexer.Symbol is FromToken)
+        {
+            var symbol2 = Lexer.Symbol;
+            Lexer.Advance();
+
+            var right = ParseTest();
+
+            return new YieldFromExprNode(pos, Lexer.Position, symbol1, symbol2, right);
+        }
+
+        var right2 = ParseTestListStarExpr();
+
+        return new YieldExprNode(pos, Lexer.Position, symbol1, right2);
     }
 }
