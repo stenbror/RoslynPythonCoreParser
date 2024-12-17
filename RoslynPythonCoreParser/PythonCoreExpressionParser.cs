@@ -569,7 +569,34 @@ public partial class PythonCoreParser
         throw new NotImplementedException();
     }
     
+    /// <summary>
+    ///  Handling grammar rule: subscript (',' subscript)* [',']
+    /// </summary>
+    /// <returns> SubscriptListExprNode | ExprNode </returns>
     private ExprNode ParseSubscriptList()
+    {
+        var pos = Lexer.Position;
+        var nodes = new List<ExprNode>();
+        var separators = new List<Token>();
+        
+        nodes.Add(ParseSubscript());
+
+        while (Lexer.Symbol is CommaToken)
+        {
+            separators.Add(Lexer.Symbol);
+            Lexer.Advance();
+
+            if (Lexer.Symbol is RightBracketToken) break;
+            
+            nodes.Add(ParseSubscript());
+        }
+        
+        return nodes.Count == 1
+            ? nodes[0]
+            : new SubscriptListExprNode(pos, Lexer.Position, nodes.ToArray(), separators.ToArray());
+    }
+
+    private ExprNode ParseSubscript()
     {
         throw new NotImplementedException();
     }
