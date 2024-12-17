@@ -695,9 +695,69 @@ public partial class PythonCoreParser
             : new ArgListExprNode(pos, Lexer.Position, nodes.ToArray(), separators.ToArray());
     }
     
+    /// <summary>
+    ///  Handle grammar rule: ( test [comp_for] |
+    /// test ':=' test |
+    /// test '=' test |
+    /// '**' test |
+    /// '*' test )
+    /// </summary>
+    /// <returns> ArgumentExprNode | ExprNode </returns>
+    /// <exception cref="Exception"></exception>
     private ExprNode ParseArgument()
     {
-        throw new NotImplementedException();
+        var pos = Lexer.Position;
+
+        if (Lexer.Symbol is BinaryOperatorMulToken)
+        {
+            var symbol = Lexer.Symbol;
+            Lexer.Advance();
+
+            if (Lexer.Symbol is not NameToken) throw new Exception();
+
+            var pos2 = Lexer.Position;
+            var symbol2 = Lexer.Symbol;
+            Lexer.Advance();
+
+            return new DictionaryReferenceExprNode(pos, Lexer.Position, symbol, new LiteralNameExprNode(pos2, Lexer.Position, symbol2));
+        }
+        else if (Lexer.Symbol is BinaryOperatorPowerToken)
+        {
+            var symbol = Lexer.Symbol;
+            Lexer.Advance();
+
+            if (Lexer.Symbol is not NameToken) throw new Exception();
+
+            var pos2 = Lexer.Position;
+            var symbol2 = Lexer.Symbol;
+            Lexer.Advance();
+
+            return new LiteralSetReferenceExprNode(pos, Lexer.Position, symbol, new LiteralNameExprNode(pos2, Lexer.Position, symbol2));
+        }
+        else if (Lexer.Symbol is NameToken symbol3)
+        {
+            Lexer.Advance();
+            var left = new LiteralNameExprNode(pos, Lexer.Position, symbol3);
+
+            if (Lexer.Symbol is AsyncToken or ForToken)
+            {
+                var right = ParseCompFor();
+
+                return new ArgumentExprNode(pos, Lexer.Position, left, null, right);
+            }
+            else if (Lexer.Symbol is ColonAssignToken or AssignToken)
+            {
+                var symbol4 = Lexer.Symbol;
+                Lexer.Advance();
+
+                var right = ParseTest();
+
+                return new ArgumentExprNode(pos, Lexer.Position, left, symbol4, right);
+            }
+            
+            return left;
+        }
+        else throw new Exception();
     }
     
     private ExprNode ParseCompIter()
