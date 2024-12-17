@@ -50,6 +50,15 @@ public partial class PythonCoreParser
 
         return new TestExprNode(pos, Lexer.Position, left, symbol1, right, symbol2, next);
     }
+
+    /// <summary>
+    ///  Handle grammar rule: or_test | lambdef_nocond
+    /// </summary>
+    /// <returns> ExprNode </returns>
+    private ExprNode ParseTestNoCond()
+    {
+        return Lexer.Symbol is LambdaToken ? ParseLambdaDef(false) : ParseOrTest();
+    }
     
     private ExprNode ParseLambdaDef(bool isConditional)
     {
@@ -786,9 +795,21 @@ public partial class PythonCoreParser
         throw new NotImplementedException();
     }
     
+    /// <summary>
+    ///  Handle grammar rule: 'if' test_nocond [comp_iter]
+    /// </summary>
+    /// <returns> CompIfExprNode | ExprNode </returns>
     private ExprNode ParseCompIf()
     {
-        throw new NotImplementedException();
+        var pos = Lexer.Position;
+        var symbol = Lexer.Symbol;
+        Lexer.Advance();
+
+        var right = ParseTestNoCond();
+
+        var next = Lexer.Symbol is ForToken or IfToken or AsyncToken ? ParseCompIter() : null;
+
+        return new CompIfExprNode(pos, Lexer.Position, symbol, right, next);
     }
     
     private ExprNode ParseYieldExpr()
