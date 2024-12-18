@@ -591,6 +591,11 @@ public partial class PythonCoreParser
             : new TestListCompExprNode(pos, Lexer.Position, nodes.ToArray(), separators.ToArray());
     }
     
+    /// <summary>
+    ///  Handling grammar rule: '(' [arglist] ')' | '[' subscriptlist ']' | '.' NAME
+    /// </summary>
+    /// <returns> TrailerDotNameExprNode | TrailerCallExprNode | TrailerIndexExprNode </returns>
+    /// <exception cref="Exception"></exception>
     private ExprNode ParseTrailer()
     {
         var pos = Lexer.Position;
