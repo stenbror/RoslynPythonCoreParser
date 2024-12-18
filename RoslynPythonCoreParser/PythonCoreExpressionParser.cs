@@ -534,7 +534,7 @@ public partial class PythonCoreParser
 
         if (symbol is LeftCurlyToken symbol1)
         {
-            return ParseDictorSetMaker(symbol1);
+            return ParseDictorSetMaker(symbol1, pos);
         }
 
         return symbol switch
@@ -752,9 +752,153 @@ public partial class PythonCoreParser
             : new TestListExprNode(pos, Lexer.Position, nodes.ToArray(), separators.ToArray());
     }
     
-    private ExprNode ParseDictorSetMaker(LeftCurlyToken symbol1)
+    /// <summary>
+    ///  Handle grammar rule: ( ((test ':' test | '**' expr)
+    /// (comp_for | (',' (test ':' test | '**' expr))* [','])) |
+    /// ((test | star_expr)
+    /// (comp_for | (',' (test | star_expr))* [','])) )
+    /// </summary>
+    /// <param name="symbol1"></param>
+    /// <param name="pos"></param>
+    /// <returns> LiteralDictionaryExprNode | LiteralSetExprNode </returns>
+    private ExprNode ParseDictorSetMaker(LeftCurlyToken symbol1, uint pos)
     {
-        throw new NotImplementedException();
+        /* Empty dictionary */
+        if (Lexer.Symbol is RightCurlyToken)
+        {
+            var symbol2 = Lexer.Symbol;
+            Lexer.Advance();
+
+            return new LiteralDictionaryExprNode(pos, Lexer.Position, symbol1, [], symbol2);
+        }
+
+        var isSet = false;
+        var dictionaryElements = new List<DictionaryEntryExprNode>();
+        var setElements = new List<ExprNode>();
+        var separators = new List<Token>();
+        var pos2 = Lexer.Position;
+        
+        /* First element */
+        switch (Lexer.Symbol)
+        {
+            case BinaryOperatorMulToken:
+            {
+                var symbol3 = Lexer.Symbol;
+                Lexer.Advance();
+                var right1 = ParseExpr();
+
+                setElements.Add(new LiteralSetReferenceExprNode(pos2, Lexer.Position, symbol3, right1));
+                break;
+            }
+            case BinaryOperatorPowerToken:
+            {
+                var symbol3 = Lexer.Symbol;
+                Lexer.Advance();
+                var right1 = ParseTest();
+
+                setElements.Add(new DictionaryReferenceExprNode(pos2, Lexer.Position, symbol3, right1));
+                break;
+            }
+            default:
+            {
+                var left = ParseTest();
+
+                if (Lexer.Symbol is ColonToken)
+                {
+                    var symbol5 = Lexer.Symbol;
+                    Lexer.Advance();
+                    isSet = false;
+                    var right = ParseTest();
+                    
+                    dictionaryElements.Add(new DictionaryEntryExprNode(pos2, Lexer.Position, left, symbol5, right));
+                }
+                else
+                {
+                    isSet = true;
+                    setElements.Add(left);
+                }
+                break;
+            }
+        }
+
+        /* Second element is 'for' or 'async' or rest of elements in dictionary or set */
+        if (Lexer.Symbol is ForToken or AsyncToken)
+        {
+            var pos3 = Lexer.Position;
+            
+            if (isSet)
+            {
+                setElements.Add(ParseCompFor());
+            }
+            else
+            {
+                var right3 = ParseCompFor();
+                dictionaryElements.Add(new DictionaryEntryExprNode(pos3, Lexer.Position, ParseCompFor(), null, null));
+            }
+        }
+        else /* Rest of elements */
+        {
+            if (isSet)
+            {
+                while (Lexer.Symbol is CommaToken)
+                {
+                    separators.Add(Lexer.Symbol);
+                    Lexer.Advance();
+
+                    if (Lexer.Symbol is RightCurlyToken) break;
+
+                    if (Lexer.Symbol is BinaryOperatorMulToken)
+                    {
+                        var pos5 = Lexer.Position;
+                        var symbol6 = Lexer.Symbol;
+                        Lexer.Advance();
+
+                        var right6 = ParseExpr();
+                        
+                        setElements.Add(new LiteralSetReferenceExprNode(pos5, Lexer.Position, symbol6, right6));
+                    }
+                    else setElements.Add(ParseTest());
+                }
+            }
+            else
+            {
+                while (Lexer.Symbol is CommaToken)
+                {
+                    separators.Add(Lexer.Symbol);
+                    Lexer.Advance();
+
+                    if (Lexer.Symbol is RightCurlyToken) break;
+
+                    if (Lexer.Symbol is BinaryOperatorPowerToken)
+                    {
+                        var symbol3 = Lexer.Symbol;
+                        Lexer.Advance();
+                        var right1 = ParseTest();
+
+                        setElements.Add(new DictionaryReferenceExprNode(pos2, Lexer.Position, symbol3, right1));
+                    }
+                    else
+                    {
+                        var left8 = ParseTest();
+
+                        if (Lexer.Symbol is not ColonToken) throw new Exception();
+                        var symbol8 = Lexer.Symbol;
+                        Lexer.Advance();
+
+                        var right8 = ParseTest();
+                        
+                        dictionaryElements.Add(new DictionaryEntryExprNode(pos2, Lexer.Position, left8, symbol8, right8));
+                    }
+                }
+            }
+        }
+        
+        var symbol4 = Lexer.Symbol;
+        Lexer.Advance();
+
+        return isSet
+            ? new LiteralSetExprNode(pos, Lexer.Position, symbol1, setElements.ToArray(), symbol4)
+            : new LiteralDictionaryExprNode(pos, Lexer.Position, symbol1, dictionaryElements.ToArray(), symbol4);
     }
     
     /// <summary>

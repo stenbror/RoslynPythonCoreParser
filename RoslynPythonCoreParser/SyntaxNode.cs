@@ -127,10 +127,10 @@ public sealed record LiteralTupleExprNode(uint Start, uint End, Token Symbol1, E
 public sealed record LiteralListExprNode(uint Start, uint End, Token Symbol1, ExprNode? Right, Token Symbol2)
     : ExprNode(Start, End);
 
-public sealed record LiteralDictionaryExprNode(uint Start, uint End, Token Symbol1, ExprNode[] Nodes, Token Symbol2)
+public sealed record LiteralDictionaryExprNode(uint Start, uint End, Token Symbol1, DictionaryEntryExprNode[] Nodes, Token Symbol2)
     : ExprNode(Start, End);
 
-public sealed record DictionaryEntryExprNode(uint Start, uint End, ExprNode Left, Token Symbol, ExprNode Right)
+public sealed record DictionaryEntryExprNode(uint Start, uint End, ExprNode Left, Token? Symbol, ExprNode? Right)
     : ExprNode(Start, End);
 
 public sealed record DictionaryReferenceExprNode(uint Start, uint End, Token Symbol, ExprNode Right)
