@@ -2,9 +2,19 @@
 
 public partial class PythonCoreParser
 {
+    /// <summary>
+    ///  Handle grammar rule for simple_stmt | compound_stmt
+    /// </summary>
+    /// <returns> StmtNode </returns>
     private StmtNode ParseStmt()
     {
-        throw new NotImplementedException();
+        return Lexer.Symbol switch
+        {
+            IfToken or WhileToken or AsyncToken or ForToken or TryToken or WithToken or DefToken or ClassToken or  BinaryOperatorMatricesToken =>
+                ParseCompoundStmt(),
+            NameToken( _ , _ , "match" , _ ) => ParseCompoundStmt(), /* Contextual keyword 'match' */
+            _ => ParseSimpleStmt()
+        };
     }
     
     private StmtNode ParseSimpleStmt()
