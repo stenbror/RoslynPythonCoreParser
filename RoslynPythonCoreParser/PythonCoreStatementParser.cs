@@ -77,9 +77,19 @@ public partial class PythonCoreParser
         throw new NotImplementedException();
     }
     
+    /// <summary>
+    ///  Handle Grammar rule: 'del' expr_list
+    /// </summary>
+    /// <returns> DelStmtNode </returns>
     private StmtNode ParseDelStmt()
     {
-        throw new NotImplementedException();
+        var pos = Lexer.Position;
+        var symbol = Lexer.Symbol;
+        Lexer.Advance();
+
+        var right = ParseExprList();
+
+        return new DelStmtNode(pos, Lexer.Position, symbol, right);
     }
     
     private StmtNode ParsePassStmt()
