@@ -21,7 +21,6 @@ public partial class PythonCoreParser
     ///  Handle grammar rule: small_stmt (';' small_stmt)* [';'] NEWLINE
     /// </summary>
     /// <returns> StmtNode </returns>
-    /// <exception cref="Exception"></exception>
     private StmtNode ParseSimpleStmt()
     {
         var pos = Lexer.Position;
@@ -45,12 +44,27 @@ public partial class PythonCoreParser
         var newline = Lexer.Symbol;
         Lexer.Advance();
 
-        return nodes.Count == 1 ? nodes[0] : new SimpleStmtNode(pos, Lexer.Position, nodes.ToArray(), separators.ToArray(), newline);
+        return new SimpleStmtNode(pos, Lexer.Position, nodes.ToArray(), separators.ToArray(), newline);
     }
     
+    /// <summary>
+    ///  Handle grammar rule: (expr_stmt | del_stmt | pass_stmt | flow_stmt |
+    /// import_stmt | global_stmt | nonlocal_stmt | assert_stmt)
+    /// </summary>
+    /// <returns> StmtNode </returns>
     private StmtNode ParseSmallStmt()
     {
-        throw new NotImplementedException();
+        return Lexer.Symbol switch
+        {
+            DelToken => ParseDelStmt(),
+            PassToken => ParsePassStmt(),
+            BreakToken or ContinueToken or ReturnToken or RaiseToken or YieldToken => ParseFlowStmt(),
+            ImportToken or FromToken => ParseImportStmt(),
+            GlobalToken => ParseGlobalStmt(),
+            NonlocalToken => ParseNonlocalStmt(),
+            AssertToken => ParseAssertStmt(),
+            _ => ParseExprStmt()
+        };
     }
     
     private StmtNode ParseExprStmt()
