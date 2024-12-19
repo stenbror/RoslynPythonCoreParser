@@ -2,12 +2,6 @@
 
 public partial class PythonCoreParser
 {
-
-    private StmtNode ParseVarArgsList()
-    {
-        throw new NotImplementedException();
-    }
-    
     private StmtNode ParseStmt()
     {
         throw new NotImplementedException();
