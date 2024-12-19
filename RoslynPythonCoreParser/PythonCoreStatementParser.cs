@@ -17,9 +17,35 @@ public partial class PythonCoreParser
         };
     }
     
+    /// <summary>
+    ///  Handle grammar rule: small_stmt (';' small_stmt)* [';'] NEWLINE
+    /// </summary>
+    /// <returns> StmtNode </returns>
+    /// <exception cref="Exception"></exception>
     private StmtNode ParseSimpleStmt()
     {
-        throw new NotImplementedException();
+        var pos = Lexer.Position;
+        var nodes = new List<StmtNode>();
+        var separators = new List<Token>();
+        
+        nodes.Add(ParseSmallStmt());
+
+        while (Lexer.Symbol is SemiColonToken)
+        {
+            separators.Add(Lexer.Symbol);
+            Lexer.Advance();
+
+            if (Lexer.Symbol is NewlineToken) break;
+                
+            nodes.Add(ParseSmallStmt());
+        }
+
+        if (Lexer.Symbol is not NewlineToken) throw new Exception();
+        
+        var newline = Lexer.Symbol;
+        Lexer.Advance();
+
+        return nodes.Count == 1 ? nodes[0] : new SimpleStmtNode(pos, Lexer.Position, nodes.ToArray(), separators.ToArray(), newline);
     }
     
     private StmtNode ParseSmallStmt()

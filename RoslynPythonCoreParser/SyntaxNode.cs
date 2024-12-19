@@ -188,3 +188,5 @@ public sealed record YieldFromExprNode(uint Start, uint End, Token Symbol1, Toke
 
 /* Statement nodes */
 public abstract record StmtNode(uint Start, uint End) : SyntaxNode(Start, End);
+
+public sealed record SimpleStmtNode(uint Start, uint End, StmtNode[] Nodes, Token[] Separators, Token Newline) : StmtNode(Start, End);
