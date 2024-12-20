@@ -105,9 +105,22 @@ public partial class PythonCoreParser
         return new PassStmtNode(pos, Lexer.Position, symbol);
     }
     
+    /// <summary>
+    ///  Handle grammar rule: break_stmt | continue_stmt | return_stmt | raise_stmt | yield_stmt
+    /// </summary>
+    /// <returns> StmtNode </returns>
     private StmtNode ParseFlowStmt()
     {
-        throw new NotImplementedException();
+        if (FlowLevel == 0) throw new Exception();
+        
+        return Lexer.Symbol switch
+        {
+            BreakToken => ParseBreakStmt(),
+            ContinueToken => ParseContinueStmt(),
+            ReturnToken => ParseReturnStmt(),
+            RaiseToken => ParseRaiseStmt(),
+            _ => ParseYieldStmt()
+        };
     }
     
     private StmtNode ParseBreakStmt()
@@ -126,6 +139,11 @@ public partial class PythonCoreParser
     }
     
     private StmtNode ParseRaiseStmt()
+    {
+        throw new NotImplementedException();
+    }
+    
+    private StmtNode ParseYieldStmt()
     {
         throw new NotImplementedException();
     }
