@@ -92,9 +92,17 @@ public partial class PythonCoreParser
         return new DelStmtNode(pos, Lexer.Position, symbol, right);
     }
     
+    /// <summary>
+    ///  Handle grammar rule: 'pass'
+    /// </summary>
+    /// <returns> PassStmtNode </returns>
     private StmtNode ParsePassStmt()
     {
-        throw new NotImplementedException();
+        var pos = Lexer.Position;
+        var symbol = Lexer.Symbol;
+        Lexer.Advance();
+        
+        return new PassStmtNode(pos, Lexer.Position, symbol);
     }
     
     private StmtNode ParseFlowStmt()
