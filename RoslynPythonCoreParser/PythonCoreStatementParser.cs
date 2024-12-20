@@ -164,9 +164,31 @@ public partial class PythonCoreParser
         return new ReturnStmtNode(pos, Lexer.Position, symbol, right);
     }
     
+    /// <summary>
+    ///  Handle grammar rule: 'raise' [test ['from' test]]
+    /// </summary>
+    /// <returns> RaiseStmtNode </returns>
     private StmtNode ParseRaiseStmt()
     {
-        throw new NotImplementedException();
+        var pos = Lexer.Position;
+        var symbol = Lexer.Symbol;
+        Lexer.Advance();
+
+        if (Lexer.Symbol is NewlineToken or SemiColonToken) return new RaiseStmtNode(pos, Lexer.Position, symbol, null, null, null);
+
+        var left = ParseTest();
+
+        if (Lexer.Symbol is FromToken)
+        {
+            var symbol2 = Lexer.Symbol;
+            Lexer.Advance();
+
+            var right = ParseTest();
+
+            return new RaiseStmtNode(pos, Lexer.Position, symbol, left, symbol2, right);
+        }
+        
+        return new RaiseStmtNode(pos, Lexer.Position, symbol, left, null, null);
     }
     
     private StmtNode ParseYieldStmt()
