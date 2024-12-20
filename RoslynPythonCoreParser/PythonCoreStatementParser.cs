@@ -123,14 +123,30 @@ public partial class PythonCoreParser
         };
     }
     
+    /// <summary>
+    ///  Handle grammar rule: 'break'
+    /// </summary>
+    /// <returns> BreakStmtNode </returns>
     private StmtNode ParseBreakStmt()
     {
-        throw new NotImplementedException();
+        var pos = Lexer.Position;
+        var symbol = Lexer.Symbol;
+        Lexer.Advance();
+        
+        return new BreakStmtNode(pos, Lexer.Position, symbol);
     }
     
+    /// <summary>
+    ///  Handle grammar rule: 'continue'
+    /// </summary>
+    /// <returns> ContinueStmtNode </returns>
     private StmtNode ParseContinueStmt()
     {
-        throw new NotImplementedException();
+        var pos = Lexer.Position;
+        var symbol = Lexer.Symbol;
+        Lexer.Advance();
+        
+        return new ContinueStmtNode(pos, Lexer.Position, symbol);
     }
     
     private StmtNode ParseReturnStmt()

@@ -195,3 +195,5 @@ public sealed record SimpleStmtNode(uint Start, uint End, StmtNode[] Nodes, Toke
 
 public sealed record DelStmtNode(uint Start, uint End, Token Symbol, ExprNode Right) : StmtNode(Start, End);
 public sealed record PassStmtNode(uint Start, uint End, Token Symbol) : StmtNode(Start, End);
+public sealed record BreakStmtNode(uint Start, uint End, Token Symbol) : StmtNode(Start, End);
+public sealed record ContinueStmtNode(uint Start, uint End, Token Symbol) : StmtNode(Start, End);
