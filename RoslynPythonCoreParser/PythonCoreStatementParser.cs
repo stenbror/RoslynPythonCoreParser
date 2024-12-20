@@ -193,7 +193,23 @@ public partial class PythonCoreParser
     
     private StmtNode ParseYieldStmt()
     {
-        throw new NotImplementedException();
+        var pos = Lexer.Position;
+        var symbol1 = Lexer.Symbol;
+        Lexer.Advance();
+
+        if (Lexer.Symbol is FromToken)
+        {
+            var symbol2 = Lexer.Symbol;
+            Lexer.Advance();
+
+            var right = ParseTest();
+
+            return new YieldFromStmtNode(pos, Lexer.Position, symbol1, symbol2, right);
+        }
+
+        var right2 = ParseTestListStarExpr();
+
+        return new YieldStmtNode(pos, Lexer.Position, symbol1, right2);
     }
     
     private StmtNode ParseImportStmt()
