@@ -149,9 +149,19 @@ public partial class PythonCoreParser
         return new ContinueStmtNode(pos, Lexer.Position, symbol);
     }
     
+    /// <summary>
+    ///  Handle grammar rule: 'return' [testlist_star_expr]
+    /// </summary>
+    /// <returns> ReturnStmtNode </returns>
     private StmtNode ParseReturnStmt()
     {
-        throw new NotImplementedException();
+        var pos = Lexer.Position;
+        var symbol = Lexer.Symbol;
+        Lexer.Advance();
+
+        var right = Lexer.Symbol is NewlineToken or SemiColonToken ? null : ParseTestListStarExpr();
+
+        return new ReturnStmtNode(pos, Lexer.Position, symbol, right);
     }
     
     private StmtNode ParseRaiseStmt()
