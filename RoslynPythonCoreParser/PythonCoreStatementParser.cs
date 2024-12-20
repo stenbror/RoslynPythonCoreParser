@@ -191,6 +191,10 @@ public partial class PythonCoreParser
         return new RaiseStmtNode(pos, Lexer.Position, symbol, left, null, null);
     }
     
+    /// <summary>
+    ///  Handle grammar rule: 'yield' ( ( 'from' Test ) | TestListStarExpr ) 
+    /// </summary>
+    /// <returns> YieldFromStmtNode | YieldStmtNode </returns>
     private StmtNode ParseYieldStmt()
     {
         var pos = Lexer.Position;
@@ -212,9 +216,17 @@ public partial class PythonCoreParser
         return new YieldStmtNode(pos, Lexer.Position, symbol1, right2);
     }
     
+    /// <summary>
+    ///  Handle grammar rule: import_stmt | import_from_stmt
+    /// </summary>
+    /// <returns> StmtNode </returns>
     private StmtNode ParseImportStmt()
     {
-        throw new NotImplementedException();
+        return Lexer.Symbol switch
+        {
+            ImportToken => ParseImportStmt(),
+            _ => ParseImportFromStmt()
+        };
     }
     
     private StmtNode ParseImportNameStmt()
