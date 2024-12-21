@@ -656,7 +656,7 @@ public partial class PythonCoreParser
     /// <returns> StmtNode </returns>
     private StmtNode ParseCompoundStmt()
     {
-        var node = Lexer.Symbol switch
+        return Lexer.Symbol switch
         {
             IfToken => ParseIfStmt(),
             WhileToken => ParseWhileStmt(),
@@ -668,8 +668,6 @@ public partial class PythonCoreParser
             AsyncToken => ParseAsyncStmt(),
             _ => ParseDecorated()
         };
-
-        return node;
     }
 
     /// <summary>
