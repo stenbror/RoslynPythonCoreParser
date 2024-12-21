@@ -203,3 +203,4 @@ public sealed record YieldStmtNode(uint Start, uint End, Token Symbol, StmtNode 
 public sealed record YieldFromStmtNode(uint Start, uint End, Token Symbol1, Token Symbol2, ExprNode Right) : StmtNode(Start, End);
 public sealed record GlobalStmtNode(uint Start, uint End, Token Symbol, ExprNode[] Nodes, Token[] Separators) : StmtNode(Start, End);
 public sealed record NonlocalStmtNode(uint Start, uint End, Token Symbol, ExprNode[] Nodes, Token[] Separators) : StmtNode(Start, End);
+public sealed record AssertStmtNode(uint Start, uint End, Token Symbol1, ExprNode Left, Token? Symbol2, ExprNode? Right) : StmtNode(Start, End);

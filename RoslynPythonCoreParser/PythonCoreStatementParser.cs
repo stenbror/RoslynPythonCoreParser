@@ -322,9 +322,29 @@ public partial class PythonCoreParser
         return new NonlocalStmtNode(pos, Lexer.Position, symbol, nodes.ToArray(), separators.ToArray());
     }
     
+    /// <summary>
+    ///  Grammar rule for: 'assert' test [ ',' test ]
+    /// </summary>
+    /// <returns> AssertStmtNode </returns>
     private StmtNode ParseAssertStmt()
     {
-        throw new NotImplementedException();
+        var pos = Lexer.Position;
+        var symbol = Lexer.Symbol;
+        Lexer.Advance();
+
+        var left = ParseTest();
+
+        if (Lexer.Symbol is CommaToken)
+        {
+            var symbol2 = Lexer.Symbol;
+            Lexer.Advance();
+
+            var right = ParseTest();
+            
+            return new AssertStmtNode(pos, Lexer.Position, symbol, left, symbol2, right);
+        }
+
+        return new AssertStmtNode(pos, Lexer.Position, symbol, left, null, null);
     }
     
     private StmtNode ParseCompoundStmt()
