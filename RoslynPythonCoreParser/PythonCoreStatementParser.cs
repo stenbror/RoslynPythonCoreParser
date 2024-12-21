@@ -1,4 +1,5 @@
 ﻿using System.Runtime.CompilerServices;
+using System.Runtime.Serialization;
 
 namespace RoslynPythonCoreParser;
 
@@ -251,9 +252,31 @@ public partial class PythonCoreParser
         throw new NotImplementedException();
     }
     
+    /// <summary>
+    ///  Handle grammar rule: import_as_name (',' import_as_name)* [',']
+    /// </summary>
+    /// <returns> ImportAsNamesStmtNode | ImportAsNameStmtNode </returns>
     private StmtNode ParseImportAsNamesStmt()
     {
-        throw new NotImplementedException();
+        var pos = Lexer.Position;
+        var nodes = new List<StmtNode>();
+        var separators = new List<Token>();
+        
+        nodes.Add(ParseImportAsNameStmt());
+
+        while (Lexer.Symbol is CommaToken)
+        {
+            separators.Add(Lexer.Symbol);
+            Lexer.Advance();
+
+            if (Lexer.Symbol is NewlineToken or SemiColonToken) break;
+            
+            nodes.Add(ParseImportAsNameStmt());
+        }
+        
+        return nodes.Count == 1
+            ? nodes[0]
+            : new ImportAsNamesStmtNode(pos, Lexer.Position, nodes.ToArray(), separators.ToArray());
     }
     
     /// <summary>
