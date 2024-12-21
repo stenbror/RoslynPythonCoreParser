@@ -228,8 +228,7 @@ public sealed record FloorDivAssignStmtNode(uint Start, uint End, StmtNode Left,
 public sealed record AnnAssignStmtNode(uint Start, uint End, StmtNode Left, Token Symbol1, ExprNode Right, Token? Symbol2, StmtNode? Next) : StmtNode(Start, End);
 public sealed record AssignmentStmtNode(uint Start, uint End, StmtNode Left, StmtNode[] Nodes, Token? TypeComment) : StmtNode(Start, End);
 public sealed record AssignmentElementStmtNode(uint Start, uint End, Token Symbol, StmtNode Right) : StmtNode(Start, End);
-
-
+public sealed record AsyncStmtNode(uint Start, uint End, Token Symbol, StmtNode Right) : StmtNode(Start, End);
 public sealed record IfStmtNode(uint Start, uint End, Token Symbol1, ExprNode Left, Token Symbol2, StmtNode Right, StmtNode[] Elif, StmtNode? Else) : StmtNode(Start, End);
 public sealed record ElifStmtNode(uint Start, uint End, Token Symbol1, ExprNode Left, Token Symbol2, StmtNode Right) : StmtNode(Start, End);
 public sealed record ElseStmtNode(uint Start, uint End, Token Symbol1, Token Symbol2, StmtNode Right) : StmtNode(Start, End);

@@ -672,9 +672,26 @@ public partial class PythonCoreParser
         return node;
     }
 
+    /// <summary>
+    ///  Handle grammar rule: 'async' (funcdef | with_stmt | for_stmt)
+    /// </summary>
+    /// <returns> SyncStmtNode </returns>
+    /// <exception cref="SyntaxError"></exception>
     private StmtNode ParseAsyncStmt()
     {
-        throw new Exception();
+        var pos = Lexer.Position;
+        var symbol = Lexer.Symbol;
+        Lexer.Advance();
+
+        var right = Lexer.Symbol switch
+        {
+            DefToken => ParseFuncDef(),
+            ForToken => ParseForStmt(),
+            WithToken => ParseWithStmt(),
+            _ => throw new SyntaxError(Lexer.Position, "Expecting 'def', 'for' or 'with' after 'async' in statement")
+        };
+
+        return new AsyncStmtNode(pos, Lexer.Position, symbol, right);
     }
     
     /// <summary>
