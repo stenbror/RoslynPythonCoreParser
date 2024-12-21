@@ -247,9 +247,28 @@ public partial class PythonCoreParser
         throw new NotImplementedException();
     }
     
+    /// <summary>
+    ///  Handling grammar rule: dotted_name ['as' NAME]
+    /// </summary>
+    /// <returns> DottedAsNameStmtNode | DottedNameStmtNode </returns>
+    /// <exception cref="SyntaxError"></exception>
     private StmtNode ParseDottedAsNameStmt()
     {
-        throw new NotImplementedException();
+        var pos = Lexer.Position;
+        var left = ParseDottedNameStmt();
+
+        if (Lexer.Symbol is AsToken)
+        {
+            var symbol = Lexer.Symbol;
+            Lexer.Advance();
+            
+            if (Lexer.Symbol is not NameToken) throw new SyntaxError(Lexer.Position, "Missing NAME literal after 'as' in import statement");
+            var right = ParseAtom();
+
+            return new DottedAsNameStmtNode(pos, Lexer.Position, left, symbol, right);
+        }
+
+        return left;
     }
     
     /// <summary>
