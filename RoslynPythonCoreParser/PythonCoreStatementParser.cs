@@ -256,13 +256,33 @@ public partial class PythonCoreParser
         throw new NotImplementedException();
     }
     
+    /// <summary>
+    ///  Handle grammar rule: dotted_as_name (',' dotted_as_name)*
+    /// </summary>
+    /// <returns> DottedAsNamesStmtNode | DottedNameStmtNode </returns>
     private StmtNode ParseDottedAsNamesStmt()
     {
-        throw new NotImplementedException();
+        var pos = Lexer.Position;
+        var nodes = new List<StmtNode>();
+        var separators = new List<Token>();
+        
+        nodes.Add(ParseDottedAsNameStmt());
+
+        while (Lexer.Symbol is CommaToken)
+        {
+            separators.Add(Lexer.Symbol);
+            Lexer.Advance();
+            
+            nodes.Add(ParseDottedAsNameStmt());
+        }
+
+        return nodes.Count == 1
+            ? nodes[0]
+            : new DottedAsNamesStmtNode(pos, Lexer.Position, nodes.ToArray(), separators.ToArray());
     }
     
     /// <summary>
-    ///  Handle grammar rule: dotted_name: NAME ('.' NAME)*
+    ///  Handle grammar rule: NAME ('.' NAME)*
     /// </summary>
     /// <returns> DottedNameStmtNode </returns>
     private StmtNode ParseDottedNameStmt()
