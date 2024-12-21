@@ -1,7 +1,4 @@
-﻿using System.Runtime.CompilerServices;
-using System.Runtime.Serialization;
-using System.Security;
-
+﻿
 namespace RoslynPythonCoreParser;
 
 public partial class PythonCoreParser
@@ -76,9 +73,44 @@ public partial class PythonCoreParser
         throw new NotImplementedException();
     }
     
+    /// <summary>
+    ///  Handle grammar rule: (test|star_expr) (',' (test|star_expr))* [',']
+    /// </summary>
+    /// <returns> TestListStarExprStmtNode </returns>
     private StmtNode ParseTestListStarExpr()
     {
-        throw new NotImplementedException();
+        var pos = Lexer.Position;
+        var nodes = new List<ExprNode>();
+        var separators = new List<Token>();
+        nodes.Add( Lexer.Symbol is BinaryOperatorMulToken ? ParseStarExpr() : ParseTest() );
+
+        while (Lexer.Symbol is CommaToken)
+        {
+            separators.Add(Lexer.Symbol);
+            Lexer.Advance();
+
+            if (Lexer.Symbol is PlusAssignToken 
+                or MinusAssignToken 
+                or MulAssignToken 
+                or MatricesAssignToken
+                or DivAssignToken
+                or ModuloAssignToken
+                or BitAndAssignToken
+                or BitOrAssignToken
+                or BitXorAssignToken
+                or ShiftLeftAssignToken
+                or ShiftRightAssignToken
+                or PowerAssignToken
+                or FloorDivAssignToken
+                or SemiColonToken
+                or NewlineToken
+                or AssignToken
+                or ColonToken) break;
+            
+            nodes.Add( Lexer.Symbol is BinaryOperatorMulToken ? ParseStarExpr() : ParseTest() );
+        }
+
+        return new TestListStarExprStmtNode(pos, Lexer.Position, nodes.ToArray(), separators.ToArray());
     }
     
     /// <summary>
