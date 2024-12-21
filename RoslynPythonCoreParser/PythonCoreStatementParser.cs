@@ -666,6 +666,7 @@ public partial class PythonCoreParser
             DefToken => ParseFuncDef(),
             ClassToken => ParseClass(),
             AsyncToken => ParseAsyncStmt(),
+            NameToken( _ , _ , "match" , _ ) => ParseMatchStmt(),
             _ => ParseDecorated()
         };
     }
