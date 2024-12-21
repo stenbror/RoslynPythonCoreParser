@@ -655,14 +655,61 @@ public partial class PythonCoreParser
         throw new NotImplementedException();
     }
     
+    /// <summary>
+    ///  Handle grammar rule: 'if' namedexpr_test ':' suite ('elif' namedexpr_test ':' suite)* ['else' ':' suite]
+    /// </summary>
+    /// <returns> IfStmtNode </returns>
+    /// <exception cref="SyntaxError"></exception>
     private StmtNode ParseIfStmt()
     {
-        throw new NotImplementedException();
+        var pos = Lexer.Position;
+        var nodes = new List<StmtNode>();
+        StmtNode? elsepart = null;
+        
+        var symbol1 = Lexer.Symbol; /* 'if' */
+        Lexer.Advance();
+
+        var left = ParseNamedExpr();
+        
+        if (Lexer.Symbol is not ColonToken) throw new SyntaxError(Lexer.Position, "Expected ':' in 'if' statement");
+        var symbol2 = Lexer.Symbol;
+        Lexer.Advance();
+
+        var right = ParseSuiteStmt();
+
+        while (Lexer.Symbol is ElifToken) /* 'elif' */
+        {
+            nodes.Add(ParseElifStmt());
+        }
+
+        if (Lexer.Symbol is ElseToken) /* 'else' */
+        {
+            elsepart = ParseElseStmt();
+        }
+
+        return new IfStmtNode(pos, Lexer.Position, symbol1, left, symbol2, right, nodes.ToArray(), elsepart);
     }
     
+    /// <summary>
+    ///  Handle grammar rule: 'elif' namedexpr ':' suite
+    /// </summary>
+    /// <returns> ElifStmtNode </returns>
+    /// <exception cref="SyntaxError"></exception>
     private StmtNode ParseElifStmt()
     {
-        throw new NotImplementedException();
+        var pos = Lexer.Position;
+        var symbol1 = Lexer.Symbol;
+        Lexer.Advance();
+
+        var left = ParseNamedExpr();
+
+        if (Lexer.Symbol is not ColonToken) throw new SyntaxError(Lexer.Position, "Expected ':' in 'elif' statement");
+        var symbol2 = Lexer.Symbol;
+        Lexer.Advance();
+
+        var right = ParseSuiteStmt();
+
+        return new ElifStmtNode(pos, Lexer.Position, symbol1, left, symbol2, right);
     }
     
     /// <summary>
