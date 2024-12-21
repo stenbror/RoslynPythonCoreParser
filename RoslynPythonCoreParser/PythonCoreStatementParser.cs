@@ -1,5 +1,6 @@
 ﻿using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
+using System.Security;
 
 namespace RoslynPythonCoreParser;
 
@@ -247,9 +248,63 @@ public partial class PythonCoreParser
         return new ImportNameStmtNode(pos, Lexer.Position, symbol, right);
     }
     
+    /// <summary>
+    ///  Handle grammar rule: ('from' (('.' | '...')* dotted_name | ('.' | '...')+)
+    /// 'import' ('*' | '(' import_as_names ')' | import_as_names))
+    /// </summary>
+    /// <returns> FromImportStmtNode </returns>
+    /// <exception cref="SyntaxError"></exception>
     private StmtNode ParseImportFromStmt()
     {
-        throw new NotImplementedException();
+        var pos = Lexer.Position;
+        var symbol1 = Lexer.Symbol; /* 'from' */
+        Lexer.Advance();
+
+        var dots = new List<Token>();
+
+        while (Lexer.Symbol is DotToken or ElipsisToken)
+        {
+            dots.Add(Lexer.Symbol);
+            Lexer.Advance();
+        }
+
+        if (Lexer.Symbol is ImportToken && dots.Count == 0) throw new SyntaxError(Lexer.Position, "Missing 'from' elements in import statement");
+
+        var left = Lexer.Symbol is not ImportToken ? ParseDottedNameStmt() : null;
+
+        if (Lexer.Symbol is not ImportToken) throw new SyntaxError(Lexer.Position, "Missing 'import' in from import statement");
+        var symbol2 = Lexer.Symbol; /* 'import' */
+        Lexer.Advance();
+
+        switch (Lexer.Symbol)
+        {
+            case BinaryOperatorMulToken:
+            {
+                var symbol3 = Lexer.Symbol; /* '*' */
+                Lexer.Advance();
+                
+                return new FromImportStmtNode(pos, Lexer.Position, symbol1, dots.ToArray(), left, symbol2, symbol3, null, null);
+            }
+            case LeftParenToken:
+            {
+                var symbol3 = Lexer.Symbol;
+                Lexer.Advance();
+
+                var right = ParseImportAsNamesStmt();
+
+                if (Lexer.Symbol is not RightParenToken) throw new SyntaxError(Lexer.Position, "");
+                var symbol4 = Lexer.Symbol;
+                Lexer.Advance();
+                
+                return new FromImportStmtNode(pos, Lexer.Position, symbol1, dots.ToArray(), left, symbol2, symbol3, right, symbol4);
+            }
+            default:
+            {
+                var right = ParseImportAsNamesStmt();
+
+                return new FromImportStmtNode(pos, Lexer.Position, symbol1, dots.ToArray(), left, symbol2, null, right, null);
+            }
+        }
     }
     
     /// <summary>
