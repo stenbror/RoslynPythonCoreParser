@@ -242,9 +242,30 @@ public partial class PythonCoreParser
         throw new NotImplementedException();
     }
     
+    /// <summary>
+    ///  Handle grammar rule: NAME [ 'as' NAME ]
+    /// </summary>
+    /// <returns> ImportAsNameStmtNode </returns>
+    /// <exception cref="SyntaxError"></exception>
     private StmtNode ParseImportAsNameStmt()
     {
-        throw new NotImplementedException();
+        var pos = Lexer.Position;
+        
+        if (Lexer.Symbol is not NameToken) throw new SyntaxError(Lexer.Position, "Missing NAME literal in import statement");
+        var left = ParseAtom();
+
+        if (Lexer.Symbol is AsToken)
+        {
+            var symbol = Lexer.Symbol;
+            Lexer.Advance();
+            
+            if (Lexer.Symbol is not NameToken) throw new SyntaxError(Lexer.Position, "Missing NAME literal after 'as' in import statement");
+            var right = ParseAtom();
+
+            return new ImportAsNameStmtNode(pos, Lexer.Position, left, symbol, right);
+        }
+
+        return new ImportAsNameStmtNode(pos, Lexer.Position, left, null, null);
     }
     
     /// <summary>
