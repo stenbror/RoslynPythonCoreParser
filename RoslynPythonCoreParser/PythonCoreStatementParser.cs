@@ -770,9 +770,28 @@ public partial class PythonCoreParser
         return new ElseStmtNode(pos, Lexer.Position, symbol1, symbol2, right);
     }
     
+    /// <summary>
+    ///  Handle grammar rule: 'while' namedexpr_test ':' suite ['else' ':' suite]
+    /// </summary>
+    /// <returns> WhileStmtNode </returns>
+    /// <exception cref="SyntaxError"></exception>
     private StmtNode ParseWhileStmt()
     {
-        throw new NotImplementedException();
+        var pos = Lexer.Position;
+        var symbol1 = Lexer.Symbol;
+        Lexer.Advance();
+
+        var left = ParseNamedExpr();
+        
+        if (Lexer.Symbol is not ColonToken) throw new SyntaxError(Lexer.Position, "Expecting ':' in 'while' statement");
+        var symbol2 = Lexer.Symbol;
+        Lexer.Advance();
+
+        var right = ParseSuiteStmt();
+
+        var else_part = Lexer.Symbol is ElseToken ? ParseElseStmt() : null;
+
+        return new WhileStmtNode(pos, Lexer.Position, symbol1, left, symbol2, right, else_part);
     }
     
     private StmtNode ParseForStmt()
