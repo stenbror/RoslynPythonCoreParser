@@ -261,9 +261,29 @@ public partial class PythonCoreParser
         throw new NotImplementedException();
     }
     
+    /// <summary>
+    ///  Handle grammar rule: dotted_name: NAME ('.' NAME)*
+    /// </summary>
+    /// <returns> DottedNameStmtNode </returns>
     private StmtNode ParseDottedNameStmt()
     {
-        throw new NotImplementedException();
+        var nodes = new List<ExprNode>();
+        var separators = new List<Token>();
+        var pos = Lexer.Position;
+        
+        if (Lexer.Symbol is not NameToken) throw new SyntaxError(Lexer.Position, "Missing NAME literal in named import statement");
+        nodes.Add(ParseAtom());
+        
+        while (Lexer.Symbol is CommaToken)
+        {
+            separators.Add(Lexer.Symbol);
+            Lexer.Advance();
+            
+            if (Lexer.Symbol is not NameToken) throw new SyntaxError(Lexer.Position, "Missing NAME literal in named import statement after ','");
+            nodes.Add(ParseAtom());
+        }
+
+        return new DottedNameStmtNode(pos, Lexer.Position, nodes.ToArray(), separators.ToArray());
     }
     
     /// <summary>
