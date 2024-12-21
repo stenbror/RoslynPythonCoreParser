@@ -96,3 +96,4 @@ public sealed record StringToken(uint Start, uint End, string Value, Trivia[] Tr
 
 /* Special tokens */
 public sealed record NewlineToken(uint Start, uint End, Trivia[] Trivia, char Ch1, char ch2) : Token(Start, End, Trivia);
+public sealed record TypeCommentToken(uint Start, uint End, Trivia[] Trivia, string Text) : Token(Start, End, Trivia);

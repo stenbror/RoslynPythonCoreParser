@@ -226,3 +226,5 @@ public sealed record ShiftRightAssignStmtNode(uint Start, uint End, StmtNode Lef
 public sealed record PowerAssignStmtNode(uint Start, uint End, StmtNode Left, Token Symbol, ExprNode Right) : StmtNode(Start, End);
 public sealed record FloorDivAssignStmtNode(uint Start, uint End, StmtNode Left, Token Symbol, ExprNode Right) : StmtNode(Start, End);
 public sealed record AnnAssignStmtNode(uint Start, uint End, StmtNode Left, Token Symbol1, ExprNode Right, Token? Symbol2, StmtNode? Next) : StmtNode(Start, End);
+public sealed record AssignmentStmtNode(uint Start, uint End, StmtNode Left, StmtNode[] Nodes, Token? TypeComment) : StmtNode(Start, End);
+public sealed record AssignmentElementStmtNode(uint Start, uint End, Token Symbol, StmtNode Right) : StmtNode(Start, End);

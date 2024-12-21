@@ -68,6 +68,16 @@ public partial class PythonCoreParser
         };
     }
     
+    /// <summary>
+    ///  Handle grammar rule:  testlist_star_expr (annassign | augassign (yield_expr|testlist) |
+    ///[('=' (yield_expr|testlist_star_expr))+ [TYPE_COMMENT]] )
+    /// annassign: ':' test ['=' (yield_expr|testlist_star_expr)]
+    /// </summary>
+    /// <returns> AnnAssignStmtNode | AssignmentStmtNode | PlusAssignStmtNode | MinusAssignStmtNode |
+    /// MulAssignStmtNode | MatricesAssignStmtNode | DivAssignStmtNode | ModuloAssignStmtNode |
+    /// BitAndAssignStmtNode | BitOrAssignStmtNode | BitXorAssignStmtNode | ShiftLeftAssignStmtNode |
+    /// ShiftRightAssignStmtNode | PowerAssignStmtNode | FloorDivAssignStmtNode | StmtNode </returns>
+    /// <exception cref="Exception"></exception>
     private StmtNode ParseExprStmt()
     {
         var pos = Lexer.Position;
@@ -97,7 +107,31 @@ public partial class PythonCoreParser
             }
             case AssignToken:
             {
-                break;
+                var nodes = new List<StmtNode>();
+
+                var symbol = Lexer.Symbol;
+                Lexer.Advance();
+                
+                var right = Lexer.Symbol is YieldToken ? ParseYieldStmt() : ParseTestListStarExpr();
+                nodes.Add(new AssignmentElementStmtNode(pos, Lexer.Position, symbol, right));
+
+                while (Lexer.Symbol is AssignToken)
+                {
+                    symbol = Lexer.Symbol;
+                    Lexer.Advance();
+                    
+                    right = Lexer.Symbol is YieldToken ? ParseYieldStmt() : ParseTestListStarExpr();
+                    nodes.Add(new AssignmentElementStmtNode(pos, Lexer.Position, symbol, right));
+                }
+
+                if (Lexer.Symbol is TypeCommentToken)
+                {
+                    symbol = Lexer.Symbol;
+                    Lexer.Advance();
+                }
+
+                return new AssignmentStmtNode(pos, Lexer.Position, left, nodes.ToArray(),
+                    symbol is TypeCommentToken ? symbol : null);
             }
             case PlusAssignToken:
             case MinusAssignToken:
@@ -139,8 +173,6 @@ public partial class PythonCoreParser
             default:
                 return left;
         }
-
-        throw new Exception(); // Remove
     }
     
     /// <summary>
