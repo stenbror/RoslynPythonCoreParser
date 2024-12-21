@@ -70,7 +70,62 @@ public partial class PythonCoreParser
     
     private StmtNode ParseExprStmt()
     {
-        throw new NotImplementedException();
+        var pos = Lexer.Position;
+        
+        var left = ParseTestListStarExpr();
+
+        switch (Lexer.Symbol)
+        {
+            case ColonToken:
+            {
+                break;
+            }
+            case AssignToken:
+            {
+                break;
+            }
+            case PlusAssignToken:
+            case MinusAssignToken:
+            case MulAssignToken:
+            case MatricesAssignToken:
+            case DivAssignToken:
+            case ModuloAssignToken:
+            case BitAndAssignToken:
+            case BitOrAssignToken:
+            case BitXorAssignToken:
+            case ShiftLeftAssignToken:
+            case ShiftRightAssignToken:
+            case PowerAssignToken:
+            case FloorDivAssignToken:
+            {
+                var symbol = Lexer.Symbol;
+                Lexer.Advance();
+
+                var right = Lexer.Symbol is YieldToken ? ParseYieldExpr() : ParseTestList();
+
+                return symbol switch
+                {
+                    PlusAssignToken => new PlusAssignStmtNode(pos, Lexer.Position, left, symbol, right),
+                    MinusAssignToken => new MinusAssignStmtNode(pos, Lexer.Position, left, symbol, right),
+                    MulAssignToken => new MulAssignStmtNode(pos, Lexer.Position, left, symbol, right),
+                    MatricesAssignToken => new MatricesAssignStmtNode(pos, Lexer.Position, left, symbol, right),
+                    DivAssignToken => new DivAssignStmtNode(pos, Lexer.Position, left, symbol, right),
+                    ModuloAssignToken => new ModuloAssignStmtNode(pos, Lexer.Position, left, symbol, right),
+                    BitAndAssignToken => new BitAndAssignStmtNode(pos, Lexer.Position, left, symbol, right),
+                    BitOrAssignToken => new BitOrAssignStmtNode(pos, Lexer.Position, left, symbol, right),
+                    BitXorAssignToken => new BitXorAssignStmtNode(pos, Lexer.Position, left, symbol, right),
+                    ShiftLeftAssignToken => new ShiftLeftAssignStmtNode(pos, Lexer.Position, left, symbol, right),
+                    ShiftRightAssignToken => new ShiftRightAssignStmtNode(pos, Lexer.Position, left, symbol, right),
+                    PowerAssignToken => new PowerAssignStmtNode(pos, Lexer.Position, left, symbol, right),
+                    _ => new FloorDivAssignStmtNode(pos, Lexer.Position, left, symbol, right)
+                };
+            }
+                
+            default:
+                return left;
+        }
+
+        throw new Exception(); // Remove
     }
     
     /// <summary>
@@ -82,6 +137,7 @@ public partial class PythonCoreParser
         var pos = Lexer.Position;
         var nodes = new List<ExprNode>();
         var separators = new List<Token>();
+        
         nodes.Add( Lexer.Symbol is BinaryOperatorMulToken ? ParseStarExpr() : ParseTest() );
 
         while (Lexer.Symbol is CommaToken)

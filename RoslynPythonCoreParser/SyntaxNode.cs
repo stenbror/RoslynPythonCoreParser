@@ -212,3 +212,16 @@ public sealed record ImportAsNameStmtNode(uint Start, uint End, ExprNode Left, T
 public sealed record ImportNameStmtNode(uint Start, uint End, Token Symbol, StmtNode Right) : StmtNode(Start, End);
 public sealed record FromImportStmtNode(uint Start, uint End, Token Symbol1, Token[] Dots, StmtNode? Left, Token Symbol2, Token? Symbol3, StmtNode? Right, Token? Symbol4) : StmtNode(Start, End);
 public sealed record TestListStarExprStmtNode(uint Start, uint End, ExprNode[] Nodes, Token[] Separators) : StmtNode(Start, End);
+public sealed record PlusAssignStmtNode(uint Start, uint End, StmtNode Left, Token Symbol, ExprNode Right) : StmtNode(Start, End);
+public sealed record MinusAssignStmtNode(uint Start, uint End, StmtNode Left, Token Symbol, ExprNode Right) : StmtNode(Start, End);
+public sealed record MulAssignStmtNode(uint Start, uint End, StmtNode Left, Token Symbol, ExprNode Right) : StmtNode(Start, End);
+public sealed record MatricesAssignStmtNode(uint Start, uint End, StmtNode Left, Token Symbol, ExprNode Right) : StmtNode(Start, End);
+public sealed record DivAssignStmtNode(uint Start, uint End, StmtNode Left, Token Symbol, ExprNode Right) : StmtNode(Start, End);
+public sealed record ModuloAssignStmtNode(uint Start, uint End, StmtNode Left, Token Symbol, ExprNode Right) : StmtNode(Start, End);
+public sealed record BitAndAssignStmtNode(uint Start, uint End, StmtNode Left, Token Symbol, ExprNode Right) : StmtNode(Start, End);
+public sealed record BitOrAssignStmtNode(uint Start, uint End, StmtNode Left, Token Symbol, ExprNode Right) : StmtNode(Start, End);
+public sealed record BitXorAssignStmtNode(uint Start, uint End, StmtNode Left, Token Symbol, ExprNode Right) : StmtNode(Start, End);
+public sealed record ShiftLeftAssignStmtNode(uint Start, uint End, StmtNode Left, Token Symbol, ExprNode Right) : StmtNode(Start, End);
+public sealed record ShiftRightAssignStmtNode(uint Start, uint End, StmtNode Left, Token Symbol, ExprNode Right) : StmtNode(Start, End);
+public sealed record PowerAssignStmtNode(uint Start, uint End, StmtNode Left, Token Symbol, ExprNode Right) : StmtNode(Start, End);
+public sealed record FloorDivAssignStmtNode(uint Start, uint End, StmtNode Left, Token Symbol, ExprNode Right) : StmtNode(Start, End);
