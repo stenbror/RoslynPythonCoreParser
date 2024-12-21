@@ -660,6 +660,31 @@ public partial class PythonCoreParser
         throw new NotImplementedException();
     }
     
+    private StmtNode ParseElifStmt()
+    {
+        throw new NotImplementedException();
+    }
+    
+    /// <summary>
+    ///  Handle grammar rule: 'else' ':' Suite
+    /// </summary>
+    /// <returns> ElseStmtNode </returns>
+    /// <exception cref="SyntaxError"></exception>
+    private StmtNode ParseElseStmt()
+    {
+        var pos = Lexer.Position;
+        var symbol1 = Lexer.Symbol;
+        Lexer.Advance();
+
+        if (Lexer.Symbol is not ColonToken) throw new SyntaxError(Lexer.Position, "Expecting ':' in 'else' statement");
+        var symbol2 = Lexer.Symbol;
+        Lexer.Advance();
+
+        var right = ParseSuiteStmt();
+
+        return new ElseStmtNode(pos, Lexer.Position, symbol1, symbol2, right);
+    }
+    
     private StmtNode ParseWhileStmt()
     {
         throw new NotImplementedException();
