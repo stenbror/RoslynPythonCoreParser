@@ -294,9 +294,32 @@ public partial class PythonCoreParser
         return new GlobalStmtNode(pos, Lexer.Position, symbol, nodes.ToArray(), separators.ToArray());
     }
     
+    /// <summary>
+    ///  Handle grammar rule: 'nonlocal' NAME (',' NAME)*
+    /// </summary>
+    /// <returns> NonlocalStmtNode </returns>
     private StmtNode ParseNonlocalStmt()
     {
-        throw new NotImplementedException();
+        var pos = Lexer.Position;
+        var symbol = Lexer.Symbol;
+        Lexer.Advance();
+
+        var nodes = new List<ExprNode>();
+        var separators = new List<Token>();
+
+        if (Lexer.Symbol is not NameToken) throw new SyntaxError(Lexer.Position, "Missing NAME literal in 'nonlocal' statement");
+        nodes.Add(ParseAtom());
+
+        while (Lexer.Symbol is CommaToken)
+        {
+            separators.Add(Lexer.Symbol);
+            Lexer.Advance();
+            
+            if (Lexer.Symbol is not NameToken) throw new SyntaxError(Lexer.Position, "Missing NAME literal in 'nonlocal' statement after ','");
+            nodes.Add(ParseAtom());
+        }
+
+        return new NonlocalStmtNode(pos, Lexer.Position, symbol, nodes.ToArray(), separators.ToArray());
     }
     
     private StmtNode ParseAssertStmt()
