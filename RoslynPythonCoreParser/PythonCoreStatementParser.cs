@@ -232,9 +232,19 @@ public partial class PythonCoreParser
         };
     }
     
+    /// <summary>
+    ///  Handle grammar rule: 'import' dotted_as_names 
+    /// </summary>
+    /// <returns> ImportNameStmtNode </returns>
     private StmtNode ParseImportNameStmt()
     {
-        throw new NotImplementedException();
+        var pos = Lexer.Position;
+        var symbol = Lexer.Symbol;
+        Lexer.Advance();
+
+        var right = ParseDottedAsNamesStmt();
+
+        return new ImportNameStmtNode(pos, Lexer.Position, symbol, right);
     }
     
     private StmtNode ParseImportFromStmt()

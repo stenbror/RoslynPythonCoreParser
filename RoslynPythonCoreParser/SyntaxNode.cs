@@ -209,3 +209,4 @@ public sealed record DottedAsNamesStmtNode(uint Start, uint End, StmtNode[] Node
 public sealed record ImportAsNamesStmtNode(uint Start, uint End, StmtNode[] Nodes, Token[] Separators) : StmtNode(Start, End);
 public sealed record DottedAsNameStmtNode(uint Start, uint End, StmtNode Left, Token Symbol, ExprNode Right) : StmtNode(Start, End);
 public sealed record ImportAsNameStmtNode(uint Start, uint End, ExprNode Left, Token? Symbol, ExprNode? Right) : StmtNode(Start, End);
+public sealed record ImportNameStmtNode(uint Start, uint End, Token Symbol, StmtNode Right) : StmtNode(Start, End);
