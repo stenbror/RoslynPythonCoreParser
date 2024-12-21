@@ -78,7 +78,22 @@ public partial class PythonCoreParser
         {
             case ColonToken:
             {
-                break;
+                var symbol1 = Lexer.Symbol;
+                Lexer.Advance();
+                
+                var right = ParseTest();
+
+                if (Lexer.Symbol is AssignToken)
+                {
+                    var symbol2 = Lexer.Symbol;
+                    Lexer.Advance();
+                    
+                    var next = Lexer.Symbol is YieldToken ? ParseYieldStmt() : ParseTestListStarExpr();
+
+                    return new AnnAssignStmtNode(pos, Lexer.Position, left, symbol1, right, symbol2, next);
+                }
+                
+                return new AnnAssignStmtNode(pos, Lexer.Position, left, symbol1, right, null, null);
             }
             case AssignToken:
             {
